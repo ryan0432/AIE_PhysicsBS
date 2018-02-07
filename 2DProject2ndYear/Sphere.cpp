@@ -24,6 +24,12 @@ void Sphere::makeGizmo(glm::vec2& centre, float radius, unsigned int segments,
 
 bool Sphere::checkCollision(PhysicsObject* pOther)
 {
-	//if( ((Sphere*)pOther)->getRadius() - )
+	float currDistance = glm::distance( getPosition(), ((Sphere*)pOther)->getPosition() );
+	float collisionRange = ( (Sphere*)pOther )->getRadius() + m_radius;
 	
+	if (currDistance < collisionRange)
+		return true;
+	else
+		false;
 }
+

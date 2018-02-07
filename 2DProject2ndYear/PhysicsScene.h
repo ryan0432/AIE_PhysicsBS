@@ -4,6 +4,7 @@
 #include <glm/ext.hpp>
 
 class PhysicsObject;
+class Rigidbody;
 class PhysicsScene
 {
 public:

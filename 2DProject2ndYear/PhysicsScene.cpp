@@ -1,5 +1,7 @@
 #include "PhysicsScene.h"
 #include "PhysicsObject.h"
+#include "Rigidbody.h"
+#include <list>
 #include <algorithm>
 
 
@@ -31,8 +33,9 @@ void PhysicsScene::removeActor(PhysicsObject* actor)
 
 void PhysicsScene::update(float dt)
 {
-	// update physics at a fixed time step
+	static std::list<PhysicsObject*> dirty;
 
+	// update physics at a fixed time step
 	static float accumulatedTime = 0.0f;
 	accumulatedTime += dt;
 
@@ -44,6 +47,31 @@ void PhysicsScene::update(float dt)
 		}
 
 		accumulatedTime -= m_timeStep;
+
+		for (auto pActor : m_actors)
+		{
+			for (auto pOther : m_actors)
+			{
+				if (pActor == pOther)
+					continue;
+
+				if (std::find(dirty.begin(), dirty.end(), pActor) != dirty.end() &&
+					std::find(dirty.begin(), dirty.end(), pOther) != dirty.end())
+					continue;
+
+				Rigidbody* pRigid = dynamic_cast<Rigidbody*>(pActor);
+				if (pRigid == nullptr)  continue;
+				if (pRigid->checkCollision(pOther) == true)
+				{
+					pRigid->addForceToActor( dynamic_cast<Rigidbody*>(pOther), (pRigid->getVelocity * pRigid->getMass) );
+					if (pOther == nullptr)  continue;
+
+					dirty.push_back(pRigid);
+					dirty.push_back(pOther);
+				}
+			}
+		}
+		dirty.clear();
 	}
 }
 
