@@ -1,9 +1,10 @@
-#pragma once
+#pragma once= delete
 #include "PhysicsObject.h"
 
 class Rigidbody : public PhysicsObject
 {
 public:
+	Rigidbody();
 	Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity,
 		float rotation, float mass);
 	~Rigidbody();
@@ -24,10 +25,10 @@ public:
 	float getRotation() { return m_rotation; }
 
 
-private:
+protected:
 	glm::vec2 m_position;
 	glm::vec2 m_velocity;
-	float m_mass;
 	float m_rotation;
+	float m_mass;
 };
 

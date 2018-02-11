@@ -21,8 +21,8 @@ public:
 protected:
 	ShapeType m_shapeID;
 	PhysicsObject(ShapeType a_shapeID) : m_shapeID(a_shapeID) {};
-	//------ Constructor above is the shortened ver of below ------//
-	//The
+	//------ The Constructor above is the shortened ver of below ------//
+	//
 	//PhysicsObject(ShapeType a_shapeID)
 	//{
 	//	m_shapeID = a_shapeID;
