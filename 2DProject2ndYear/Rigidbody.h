@@ -1,13 +1,12 @@
-#pragma once= delete
+#pragma once
 #include "PhysicsObject.h"
 
 class Rigidbody : public PhysicsObject
 {
 public:
-	Rigidbody();
+
 	Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity,
 		float rotation, float mass);
-	~Rigidbody();
 
 	//------ inherited from base class, have to override ------// 
 	virtual void fixedUpdate(glm::vec2 gravity, float timeStep);
@@ -15,6 +14,7 @@ public:
 
 	//------ pure virtual function, forces derived class to implement it's own method ------//
 	virtual bool checkCollision(PhysicsObject* pOther) = 0;
+
 
 	void addForce(glm::vec2 force);
 	void addForceToActor(Rigidbody* actor, glm::vec2 force);

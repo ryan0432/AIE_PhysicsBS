@@ -1,10 +1,12 @@
 #include "_2DProject2ndYearApp.h"
+#include "PhysicsEngineApp.h"
 #include "BrickTest.h"
 
-int main() {
+int main()
+{
 	
 	// allocation
-	auto app = new BrickTest();
+	auto app = new PhysicsEngineApp();
 
 	// initialise and loop
 	app->run("AIE", 1280, 720, false);

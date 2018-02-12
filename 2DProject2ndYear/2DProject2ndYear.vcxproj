@@ -177,6 +177,7 @@
     <ClInclude Include="PhysicsScene.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="test.h" />
     <ClInclude Include="_2DProject2ndYearApp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

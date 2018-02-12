@@ -16,10 +16,10 @@ public:
 	virtual void fixedUpdate(glm::vec2 gravity, float timeStep) = 0;
 	virtual void debug() = 0;
 	virtual void makeGizmo() = 0;
-	virtual void resetPosition() {};
+	virtual void resetPosition() {}
+	ShapeType getShapeID() { return m_shapeID; }
 
 protected:
-	ShapeType m_shapeID;
 	PhysicsObject(ShapeType a_shapeID) : m_shapeID(a_shapeID) {};
 	//------ The Constructor above is the shortened ver of below ------//
 	//
@@ -28,5 +28,10 @@ protected:
 	//	m_shapeID = a_shapeID;
 	//}
 	//------ Abstract classes don't have constructor (cuz it's virtual) ------//
+
+
+private:
+	ShapeType m_shapeID; //shapeID should be private coz you don't wanna child class
+						 //to change it's shape in the half way
 };
 

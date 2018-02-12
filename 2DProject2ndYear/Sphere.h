@@ -7,12 +7,12 @@ public:
 		float mass, float radius, glm::vec4 colour);
 	~Sphere();
 
-	virtual void makeGizmo(glm::vec2& centre, float radius, unsigned int segments,
-		                   glm::vec4 colour, glm::mat4* transfrom);
+	virtual void makeGizmo() override;
 
 	virtual bool checkCollision(PhysicsObject* pOther);
 
 	float getRadius() { return m_radius; }
+
 	glm::vec4 getColour() { return m_colour; }
 
 protected:

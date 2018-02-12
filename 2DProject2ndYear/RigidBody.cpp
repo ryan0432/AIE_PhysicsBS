@@ -1,24 +1,13 @@
 #include "Rigidbody.h"
 #include <iostream>
 
-Rigidbody::Rigidbody() : PhysicsObject(ShapeType::SPHERE)
-{
-
-}
-
 Rigidbody::Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity,
-	float rotation, float mass) : PhysicsObject(ShapeType::SPHERE)
+	float rotation, float mass) : PhysicsObject(shapeID)
 {
-	m_shapeID = shapeID;
 	m_position = position;
 	m_velocity = velocity;
 	m_mass = mass;
 	m_rotation = rotation;
-}
-
-Rigidbody::~Rigidbody()
-{
-
 }
 
 void Rigidbody::fixedUpdate(glm::vec2 gravity, float timeStep)
@@ -29,7 +18,7 @@ void Rigidbody::fixedUpdate(glm::vec2 gravity, float timeStep)
 
 void Rigidbody::debug()
 {
-	std::cout << "Rigidbody Object\n" << std::endl;
+	std::cout << "Rigidbody Object" << std::endl;
 }
 
 void Rigidbody::addForce(glm::vec2 force)
@@ -41,7 +30,8 @@ void Rigidbody::addForce(glm::vec2 force)
 
 void Rigidbody::addForceToActor(Rigidbody* actor, glm::vec2 force)
 {
+	//add force to the other object
 	actor->addForce(force);
-
+	//add negative force to self object
 	addForce(-force);
 }

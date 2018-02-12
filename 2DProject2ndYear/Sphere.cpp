@@ -16,10 +16,12 @@ Sphere::~Sphere()
 
 }
 
-void Sphere::makeGizmo(glm::vec2& centre, float radius, unsigned int segments,
-					   glm::vec4 colour, glm::mat4* transfrom)
+void Sphere::makeGizmo()
 {
-	aie::Gizmos::add2DCircle(centre, radius, segments, colour, transfrom);
+	//Gizmos::add2DCircle <- this function, if not do extra scaling or rotating, don't have to input transform
+	aie::Gizmos::add2DCircle(m_position, m_radius, 32U, m_colour );
+	//basically we have got enough information that inherited from all base and derived parent classes to draw the shape
+	//Such as m_position is from Rigidbody class, m_radius and m_colour from self (Sphere) class
 }
 
 bool Sphere::checkCollision(PhysicsObject* pOther)

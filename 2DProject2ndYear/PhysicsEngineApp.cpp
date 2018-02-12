@@ -3,6 +3,7 @@
 #include "Font.h"
 #include "Input.h"
 #include "PhysicsScene.h"
+#include "Sphere.h"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -31,6 +32,11 @@ bool PhysicsEngineApp::startup()
 
 	m_physicsScene = new PhysicsScene();
 	m_physicsScene->setTimeStep(0.01f);
+	m_physicsScene->setGravity(glm::vec2(0, -10));
+
+	Sphere* ball01;
+	ball01 = new Sphere(glm::vec2(-40, 0), glm::vec2(10, 30), 1.0f, 3.0f, glm::vec4(1, 0, 0, 1));
+	m_physicsScene->addActor(ball01);
 
 	return true;
 }
