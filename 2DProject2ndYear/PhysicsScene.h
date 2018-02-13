@@ -11,6 +11,11 @@ public:
 	PhysicsScene();
 	~PhysicsScene();
 
+	//struct CollisionData
+	//{
+
+	//};
+
 	void addActor(PhysicsObject* actor);
 	void removeActor(PhysicsObject* actor);
 	void update(float dt);
@@ -22,6 +27,10 @@ public:
 
 	void setTimeStep(const float timeStep) { m_timeStep = timeStep; }
 	float getTimeStep() const { return m_timeStep; }
+
+	std::vector<PhysicsObject*> getActors() const { return m_actors; }
+
+
 
 protected:
 	glm::vec2 m_gravity;

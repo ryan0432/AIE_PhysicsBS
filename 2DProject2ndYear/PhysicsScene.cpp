@@ -31,6 +31,7 @@ void PhysicsScene::addActor(PhysicsObject* actor)
 void PhysicsScene::removeActor(PhysicsObject* actor)
 {
 	std::remove( std::begin(m_actors), std::end(m_actors), actor );
+	delete actor;
 }
 
 void PhysicsScene::update(float deltaTime)

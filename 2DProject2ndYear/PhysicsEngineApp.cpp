@@ -8,6 +8,8 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <Gizmos.h>
+#include <vector>
+#include <iterator>
 
 
 
@@ -32,11 +34,27 @@ bool PhysicsEngineApp::startup()
 
 	m_physicsScene = new PhysicsScene();
 	m_physicsScene->setTimeStep(0.01f);
-	m_physicsScene->setGravity(glm::vec2(0, -10));
+	m_physicsScene->setGravity(glm::vec2(0, -2.0f));
 
-	Sphere* ball01;
-	ball01 = new Sphere(glm::vec2(-40, 0), glm::vec2(10, 30), 1.0f, 3.0f, glm::vec4(1, 0, 0, 1));
-	m_physicsScene->addActor(ball01);
+	//------ Newton's 2nd law test ------//
+	//Sphere* ball01;
+	//ball01 = new Sphere(glm::vec2(-40, 0), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(0, 0, 1, 1));
+	//m_physicsScene->addActor(ball01);
+
+	//Sphere* ball02;
+	//ball02 = new Sphere(glm::vec2(40, 0), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(1, 0, 0, 1));
+	//m_physicsScene->addActor(ball02);
+	//
+	//ball01->addForce(glm::vec2(30, 0));
+	//ball02->addForce(glm::vec2(-10, 0));
+	//-----------------------------------//
+
+	//------ Rocket Launch Test ------//
+	Sphere* rocketBall01;
+	rocketBall01 = new Sphere(glm::vec2(50,-20),glm::vec2(0,0),50 , 10, glm::vec4(0,0,1,1));
+	m_physicsScene->addActor(rocketBall01);
+	//--------------------------------//
+
 
 	return true;
 }
@@ -72,6 +90,63 @@ void PhysicsEngineApp::update(float deltaTime)
 	{
 		quit();
 	}
+
+	//------ Rocket Launch Test ------//
+
+	Rigidbody* rocket = (Rigidbody*) (m_physicsScene->getActors()[0]);
+	
+	float keyTimer = 0;
+
+	if (input->isKeyDown(aie::INPUT_KEY_UP))
+	{
+		float rocketMass = rocket->getMass();
+		float gasMass = 1;
+		keyTimer += deltaTime;
+
+		if (rocketMass >= gasMass)
+		{
+			rocket->addForce(glm::vec2(0, gasMass * deltaTime * 0.01));
+			rocket->setMass(rocketMass -= gasMass * deltaTime * 0.01);
+
+			if ((int)keyTimer % 1 == 0)
+			{
+				Sphere* gas = new Sphere(rocket->getPosition(), glm::vec2(0, 0), gasMass, gasMass , glm::vec4(1, 0.5f, 0, 1));
+				m_physicsScene->addActor(gas);
+			}
+		}
+	}
+
+
+	std::vector <Rigidbody*> deletingActorList;
+
+	for (int i = 1; i < m_physicsScene->getActors().size(); )
+	{
+		if (((Rigidbody*)(m_physicsScene->getActors()[i]))->getPosition().y < -50)
+		{
+			deletingActorList.push_back( (Rigidbody*) (m_physicsScene->getActors()[i]) );
+			//m_physicsScene->removeActor( (m_physicsScene->getActors()[i]) );
+		}
+		else
+		{
+			i++;
+		}
+	}
+
+	for (auto pActor : deletingActorList)
+	{
+		if (deletingActorList.size() == 0)
+			continue;
+		delete pActor;
+	}
+
+	deletingActorList.clear();
+
+	//make sure delete memory (change class remove func)
+	//separate visual and actual force adding to the rocket
+	//emit visual by second
+	//store the search result in a new dynamicArray so we don't iter through the changing array (may cause problem)
+
+	//--------------------------------//
 }
 
 void PhysicsEngineApp::draw()
