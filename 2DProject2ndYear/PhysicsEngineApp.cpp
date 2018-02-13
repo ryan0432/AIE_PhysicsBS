@@ -34,7 +34,7 @@ bool PhysicsEngineApp::startup()
 
 	m_physicsScene = new PhysicsScene();
 	m_physicsScene->setTimeStep(0.01f);
-	m_physicsScene->setGravity(glm::vec2(0, -2.0f));
+	m_physicsScene->setGravity(glm::vec2(0, -9.8));
 
 	//------ Newton's 2nd law test ------//
 	//Sphere* ball01;
@@ -51,7 +51,7 @@ bool PhysicsEngineApp::startup()
 
 	//------ Rocket Launch Test ------//
 	Sphere* rocketBall01;
-	rocketBall01 = new Sphere(glm::vec2(50,-20),glm::vec2(0,0),50 , 10, glm::vec4(0,0,1,1));
+	rocketBall01 = new Sphere(glm::vec2(0,0),glm::vec2(0,0),50 , 5, glm::vec4(0,0,1,1));
 	m_physicsScene->addActor(rocketBall01);
 	//--------------------------------//
 
@@ -96,50 +96,53 @@ void PhysicsEngineApp::update(float deltaTime)
 	Rigidbody* rocket = (Rigidbody*) (m_physicsScene->getActors()[0]);
 	
 	float keyTimer = 0;
+	float gasMass = 5;
 
 	if (input->isKeyDown(aie::INPUT_KEY_UP))
 	{
 		float rocketMass = rocket->getMass();
-		float gasMass = 1;
+		
 		keyTimer += deltaTime;
 
 		if (rocketMass >= gasMass)
 		{
-			rocket->addForce(glm::vec2(0, gasMass * deltaTime * 0.01));
-			rocket->setMass(rocketMass -= gasMass * deltaTime * 0.01);
+			rocket->addForce(glm::vec2(0, gasMass * 100 * deltaTime));
+			rocket->setMass(rocketMass -= gasMass * deltaTime);
 
-			if ((int)keyTimer % 1 == 0)
+			if ((int)keyTimer % 1 ==0)
 			{
-				Sphere* gas = new Sphere(rocket->getPosition(), glm::vec2(0, 0), gasMass, gasMass , glm::vec4(1, 0.5f, 0, 1));
-				m_physicsScene->addActor(gas);
+				//Sphere* gas = new Sphere(rocket->getPosition(), glm::vec2(0, 0), gasMass, gasMass , glm::vec4(1, 0.5f, 0, 1));
+				//m_physicsScene->addActor(gas);
 			}
 		}
 	}
 
 
-	std::vector <Rigidbody*> deletingActorList;
-
-	for (int i = 1; i < m_physicsScene->getActors().size(); )
+	//std::vector <Rigidbody*> deletingActorList;
+	unsigned int actorListSize = m_physicsScene->getActors().size();
+	for (unsigned int i = 1; i < actorListSize; i++)
 	{
 		if (((Rigidbody*)(m_physicsScene->getActors()[i]))->getPosition().y < -50)
 		{
-			deletingActorList.push_back( (Rigidbody*) (m_physicsScene->getActors()[i]) );
-			//m_physicsScene->removeActor( (m_physicsScene->getActors()[i]) );
+			//deletingActorList.push_back( (Rigidbody*) (m_physicsScene->getActors()[i]) );
+			m_physicsScene->removeActor( (m_physicsScene->getActors()[i]) );
+			i--;
+			actorListSize--;
 		}
-		else
-		{
-			i++;
-		}
+		//else
+		//{
+		//	i++;
+		//}
 	}
 
-	for (auto pActor : deletingActorList)
-	{
-		if (deletingActorList.size() == 0)
-			continue;
-		delete pActor;
-	}
+	//for (auto pActor : deletingActorList)
+	//{
+	//	if (deletingActorList.size() == 0)
+	//		continue;
+	//	delete pActor;
+	//}
 
-	deletingActorList.clear();
+	//deletingActorList.clear();
 
 	//make sure delete memory (change class remove func)
 	//separate visual and actual force adding to the rocket
