@@ -30,8 +30,7 @@ void PhysicsScene::addActor(PhysicsObject* actor)
 
 void PhysicsScene::removeActor(PhysicsObject* actor)
 {
-	delete actor;
-	std::remove( std::begin(m_actors), std::end(m_actors), actor );	
+	m_actors.erase(std::remove(m_actors.begin(), m_actors.end(), actor ), m_actors.end());
 }
 
 void PhysicsScene::update(float deltaTime)
@@ -77,6 +76,11 @@ void PhysicsScene::update(float deltaTime)
 		}
 		dirty.clear();
 	}
+
+	//////////////////////////////
+	// namespace usage example  //
+	// MathHelp::Power(2.0f,3); //
+	//////////////////////////////
 }
 
 void PhysicsScene::updateGizmos()
@@ -96,4 +100,6 @@ void PhysicsScene::debugScene()
 		pActor->debug();
 		count++;
 	}
+
+	
 }

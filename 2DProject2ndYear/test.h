@@ -1,4 +1,6 @@
 #pragma once
+//how to use a namespace correctly
+
 namespace MathHelp
 {
 	float Square(const float a)
@@ -18,4 +20,3 @@ namespace MathHelp
 	}
 };
 
-//how to use a namespace correctly
