@@ -164,7 +164,9 @@
   <ItemGroup>
     <ClCompile Include="BrickTest.cpp" />
     <ClCompile Include="PhysicsEngineApp.cpp" />
+    <ClCompile Include="PhysicsObject.cpp" />
     <ClCompile Include="PhysicsScene.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="_2DProject2ndYearApp.cpp" />
@@ -175,6 +177,7 @@
     <ClInclude Include="PhysicsEngineApp.h" />
     <ClInclude Include="PhysicsObject.h" />
     <ClInclude Include="PhysicsScene.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="test.h" />

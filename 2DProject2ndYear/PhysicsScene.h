@@ -30,6 +30,15 @@ public:
 
 	std::vector<PhysicsObject*> getActors() const { return m_actors; }
 
+	//------ check collision section START ------//
+	void checkForCollision();
+																// func index
+	static bool plane2Plane(PhysicsObject*, PhysicsObject*);	// 0
+	static bool plane2Sphere(PhysicsObject*, PhysicsObject*);	// 1
+	static bool sphere2Plane(PhysicsObject*, PhysicsObject*);	// 2
+	static bool sphere2Sphere(PhysicsObject*, PhysicsObject*);	// 3
+	//------ check collision section END ------//
+
 
 
 protected:

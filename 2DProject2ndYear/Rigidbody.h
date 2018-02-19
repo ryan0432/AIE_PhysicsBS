@@ -13,7 +13,8 @@ public:
 	virtual void debug();
 
 	//------ pure virtual function, forces derived class to implement it's own method ------//
-	virtual bool checkCollision(PhysicsObject* pOther) = 0;
+	///--- we do collision in PhysicsScene now, not in RigidBody ---///
+	//virtual bool checkCollision(PhysicsObject* pOther) = 0;
 
 
 	void addForce(glm::vec2 force);

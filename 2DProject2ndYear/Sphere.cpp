@@ -24,14 +24,15 @@ void Sphere::makeGizmo()
 	//Such as m_position is from Rigidbody class, m_radius and m_colour from self (Sphere) class
 }
 
-bool Sphere::checkCollision(PhysicsObject* pOther)
-{
-	float currDistance = glm::distance( getPosition(), ((Sphere*)pOther)->getPosition() );
-	float collisionRange = ( (Sphere*)pOther )->getRadius() + m_radius;
-	
-	if (currDistance < collisionRange)
-		return true;
-	else
-		false;
-}
+///--- we do collision in PhysicsScene now ---///
+//bool Sphere::checkCollision(PhysicsObject* pOther)
+//{
+//	float currDistance = glm::distance( getPosition(), ((Sphere*)pOther)->getPosition() );
+//	float collisionRange = ( (Sphere*)pOther )->getRadius() + m_radius;
+//	
+//	if (currDistance < collisionRange)
+//		return true;
+//	else
+//		false;
+//}
 

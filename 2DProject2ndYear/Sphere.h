@@ -9,7 +9,8 @@ public:
 
 	virtual void makeGizmo() override;
 
-	virtual bool checkCollision(PhysicsObject* pOther);
+	///--- we do collision in PhysicsScene now ---///
+	//virtual bool checkCollision(PhysicsObject* pOther);
 
 	float getRadius() { return m_radius; }
 
