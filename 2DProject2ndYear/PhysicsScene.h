@@ -32,11 +32,16 @@ public:
 
 	//------ check collision section START ------//
 	void checkForCollision();
-																// func index
-	static bool plane2Plane(PhysicsObject*, PhysicsObject*);	// 0
-	static bool plane2Sphere(PhysicsObject*, PhysicsObject*);	// 1
-	static bool sphere2Plane(PhysicsObject*, PhysicsObject*);	// 2
-	static bool sphere2Sphere(PhysicsObject*, PhysicsObject*);	// 3
+																
+	static bool plane2Plane(PhysicsObject*, PhysicsObject*);
+	static bool plane2Sphere(PhysicsObject*, PhysicsObject*);
+	static bool plane2Box(PhysicsObject*, PhysicsObject*);
+	static bool sphere2Plane(PhysicsObject*, PhysicsObject*);
+	static bool sphere2Sphere(PhysicsObject*, PhysicsObject*);
+	static bool sphere2Box(PhysicsObject*, PhysicsObject*);
+	static bool box2Plane(PhysicsObject*, PhysicsObject*);
+	static bool box2Sphere(PhysicsObject*, PhysicsObject*);
+	static bool box2Box(PhysicsObject*, PhysicsObject*);
 	//------ check collision section END ------//
 
 

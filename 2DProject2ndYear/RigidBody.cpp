@@ -18,7 +18,6 @@ void Rigidbody::fixedUpdate(glm::vec2 gravity, float timeStep)
 
 void Rigidbody::debug()
 {
-	std::cout << "Rigidbody Object" << std::endl;
 }
 
 void Rigidbody::addForce(glm::vec2 force)

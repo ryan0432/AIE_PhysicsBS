@@ -4,7 +4,7 @@
 class Rigidbody : public PhysicsObject
 {
 public:
-
+	Rigidbody() = delete;
 	Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity,
 		float rotation, float mass);
 
@@ -25,7 +25,9 @@ public:
 	float getMass() { return m_mass; }
 	float getRotation() { return m_rotation; }
 
+	void setPosition(glm::vec2 a_pos) { m_position = a_pos; }
 	void setMass(float a_mass) { m_mass = a_mass; }
+	void setVelocity(glm::vec2 a_velo) { m_velocity = a_velo; }
 
 
 protected:

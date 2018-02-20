@@ -4,6 +4,8 @@
 #include "Input.h"
 #include "PhysicsScene.h"
 #include "Sphere.h"
+#include "Plane.h"
+#include "Box.h"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -51,11 +53,18 @@ bool PhysicsEngineApp::startup()
 	//-----------------------------------//
 
 	//------ Rocket Launch Test ------//
+	// To fix deltaTime issue, move Rocket object into a Rocket class which derives from Sphere class or Rigidbody class
+	// So the fixedUpdate won't interfere the PhysicsScene
+	// [DON'T directly call fixedUpdate from newed rocket object from App, it will break the PhysicsScene
 	Sphere* rocketBall01;
 	rocketBall01 = new Sphere(glm::vec2(0,0),glm::vec2(0,0), rocketTotallMass, rocketRadius, glm::vec4(0,0,1,1));
 	m_physicsScene->addActor(rocketBall01);
 	//--------------------------------//
 
+	//------ Collision Detection Test ------//
+	Plane* plane01;
+	plane01 = new Plane(glm::vec2(0,1), glm::vec4(1,1,1,1), -45);
+	m_physicsScene->addActor(plane01);
 
 	return true;
 }
@@ -92,7 +101,7 @@ void PhysicsEngineApp::update(float deltaTime)
 		quit();
 	}
 
-	//------ Rocket Launch Test ------//
+	//------ Rocket Launch Test Start ------//
 	//------ Part1: Create Emission Balls ------//
 	Rigidbody* rocket = (Rigidbody*) (m_physicsScene->getActors()[0]);
 
@@ -102,10 +111,10 @@ void PhysicsEngineApp::update(float deltaTime)
 
 		if (rocketTotallMass >= rocketShellMass)
 		{
-			rocket->addForce(glm::vec2(0, gasMass * 100 * deltaTime));
+			rocket->addForce(glm::vec2(0, gasMass * 500 * deltaTime)); //*
 			rocket->setMass(rocketTotallMass -= gasMass * deltaTime);
 
-			if (emissionTimer(deltaTime, 0.5f))
+			if (emissionTimer(deltaTime, 0.3f))
 			{
 				Sphere* gas = new Sphere(glm::vec2(rocket->getPosition().x, (rocket->getPosition().y - rocketRadius - gasRadius - 1)),
 										 glm::vec2(0, -2.0f), gasMass, gasRadius, glm::vec4(1, 0.5f, 0, 1));
@@ -123,7 +132,7 @@ void PhysicsEngineApp::update(float deltaTime)
 		if (actorListSize < 1)
 			continue;
 
-		if (((Rigidbody*)(m_physicsScene->getActors()[i]))->getPosition().y < -50)
+		if (((Rigidbody*)(m_physicsScene->getActors()[i]))->getPosition().y < -55)
 		{
 			deletingActorList.push_back(m_physicsScene->getActors()[i]);
 		}
@@ -147,7 +156,7 @@ void PhysicsEngineApp::update(float deltaTime)
 	//emit visual by second
 	//store the search result in a new dynamicArray so we don't iter through the changing array (may cause problem)
 
-	//--------------------------------//
+	//------ Rocket Launch Test End ------//
 
 	debugLog(deltaTime);
 }

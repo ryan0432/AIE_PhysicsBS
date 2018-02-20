@@ -3,14 +3,15 @@
 class Plane : public PhysicsObject
 {
 public:
-	Plane(glm::vec2 normal,glm::vec4 colour, float distanceToOrigin);
+	Plane() = delete;
+	Plane(glm::vec2 normal, glm::vec4 colour, float distanceToOrigin);
 	~Plane();
 
 	//------ inherited from base class, have to override ------// 
+	//virtual void fixedUpdate(glm::vec2 gravity, float timeStep) override;
 	virtual void fixedUpdate(glm::vec2 gravity, float timeStep) override;
 	virtual void debug() override;
 	virtual void makeGizmo() override;
-	virtual void resetPosition() override;
 
 	//------ class holds ------//
 	///--- now we check collision in PhysicsScene ---///

@@ -13,11 +13,11 @@ enum ShapeType
 class PhysicsObject
 {
 public:
+	PhysicsObject() = delete;
 	//------ pure virtual function, forces derived class to implement it's own method ------//
 	virtual void fixedUpdate(glm::vec2 gravity, float timeStep) = 0;
 	virtual void debug() = 0;
 	virtual void makeGizmo() = 0;
-	virtual void resetPosition() {}
 	ShapeType getShapeID() { return m_shapeID; }
 
 	bool isStatic();

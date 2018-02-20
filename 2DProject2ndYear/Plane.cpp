@@ -17,7 +17,15 @@ Plane::~Plane()
 
 }
 
+void Plane::fixedUpdate(glm::vec2 gravity, float timeStep)
+{
 
+}
+
+void Plane::debug()
+{
+	std::cout << "Plane Normal (" << m_normal.x << " , " << m_normal.y << ")" << std::endl;
+}
 
 void Plane::makeGizmo()
 {
