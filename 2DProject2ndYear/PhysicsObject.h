@@ -19,7 +19,6 @@ public:
 	virtual void debug() = 0;
 	virtual void makeGizmo() = 0;
 	ShapeType getShapeID() { return m_shapeID; }
-
 	bool isStatic();
 
 protected:

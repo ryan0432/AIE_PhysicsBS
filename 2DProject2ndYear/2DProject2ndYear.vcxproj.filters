@@ -54,9 +54,6 @@
     <ClCompile Include="CollisionManager.cpp">
       <Filter>Source Files\PhysicsObjects</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionData.cpp">
-      <Filter>Source Files\PhysicsObjects</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_2DProject2ndYearApp.h">
@@ -91,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="CollisionManager.h">
       <Filter>Header Files\PysicsObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionData.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

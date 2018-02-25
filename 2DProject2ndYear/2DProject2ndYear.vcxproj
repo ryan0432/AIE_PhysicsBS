@@ -164,7 +164,6 @@
   <ItemGroup>
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="BrickTest.cpp" />
-    <ClCompile Include="CollisionData.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="PhysicsEngineApp.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />
@@ -178,6 +177,7 @@
   <ItemGroup>
     <ClInclude Include="Box.h" />
     <ClInclude Include="BrickTest.h" />
+    <ClInclude Include="CollisionData.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="PhysicsEngineApp.h" />
     <ClInclude Include="PhysicsObject.h" />

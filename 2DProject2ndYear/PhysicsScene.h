@@ -4,17 +4,12 @@
 #include <glm/ext.hpp>
 
 class PhysicsObject;
-class Rigidbody;
+class CollisionManager;
 class PhysicsScene
 {
 public:
 	PhysicsScene();
 	~PhysicsScene();
-
-	//struct CollisionData
-	//{
-
-	//};
 
 	void addActor(PhysicsObject* actor);
 	void removeActor(PhysicsObject* actor);
@@ -29,22 +24,6 @@ public:
 	float getTimeStep() const { return m_timeStep; }
 
 	std::vector<PhysicsObject*> getActors() const { return m_actors; }
-
-	//------ check collision section START ------//
-	void checkForCollision();
-																
-	static bool plane2Plane(PhysicsObject*, PhysicsObject*);
-	static bool plane2Sphere(PhysicsObject*, PhysicsObject*);
-	static bool plane2Box(PhysicsObject*, PhysicsObject*);
-	static bool sphere2Plane(PhysicsObject*, PhysicsObject*);
-	static bool sphere2Sphere(PhysicsObject*, PhysicsObject*);
-	static bool sphere2Box(PhysicsObject*, PhysicsObject*);
-	static bool box2Plane(PhysicsObject*, PhysicsObject*);
-	static bool box2Sphere(PhysicsObject*, PhysicsObject*);
-	static bool box2Box(PhysicsObject*, PhysicsObject*);
-	//------ check collision section END ------//
-
-
 
 protected:
 	glm::vec2 m_gravity;
