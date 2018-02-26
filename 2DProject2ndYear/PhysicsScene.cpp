@@ -55,6 +55,7 @@ void PhysicsScene::update(float deltaTime)
 		//CollisionManager* collisionManager;
 		//collisionManager->checkForCollision(this);
 		CollisionManager::checkForCollision(this);
+
 		//--- checking collision to all actors END ---//
 
 		///------ We don't use old circle collision detection anymore ------//////////////////////////////////

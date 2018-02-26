@@ -104,12 +104,13 @@ bool CollisionManager::plane2Box(CollisionData& collisionData)
 		for (auto i : boxCornersList)
 		{
 			//check all four corner's dot product with plane normal
-			float overlap = glm::dot(i, plane->getNormal());
+			collisionData.overlap = glm::dot(i, plane->getNormal());
 			//if the latest check result is less than 1 and then less than previous stored result
-			if (overlap < smallest)
+			if (collisionData.overlap < smallest)
 			{
 				//replace smallest with overlap
-				smallest = overlap;
+				smallest = collisionData.overlap;
+				//collisionData.collisionNormal = 
 			}
 		}
 		//if the smallest is equal or less than 0, means we have a collision
@@ -216,12 +217,86 @@ bool CollisionManager::box2Box(CollisionData& collisionData)
 	return false;
 }
 
-void CollisionManager::resolve()
+void CollisionManager::pushApart(CollisionData& collisionData)
 {
+	//get instance pointer of two objs
+	Rigidbody* obj1 = (Rigidbody*)collisionData.obj1;
+	Rigidbody* obj2 = (Rigidbody*)collisionData.obj2;
 
+	//get two objs' pos for further use
+	glm::vec2 obj1Pos = obj1->getPosition();
+	glm::vec2 obj2Pos = obj2->getPosition();
+
+	//get collisionNormal and overlap form CollisionData
+	glm::vec2 collisionNormal = collisionData.collisionNormal;
+	float overlap = collisionData.overlap;
+
+	//check if objs are static
+	//Case1: if both objs are dynamic (not static), push them apart by their mass ratio
+	if (!(obj1->isStatic()) && !(obj1->isStatic()))
+	{
+		//calculate totall mass
+		float totalMass = obj1->getMass() + obj2->getMass();
+		//calculate obj1's push ratio by its share in total mass
+		float obj1PushRatio = obj1->getMass() / totalMass;
+		//calculate obj2's push ratio by its share in total mass
+		float obj2PushRatio = obj2->getMass() / totalMass;
+		//set both obj's postion by adding push ratio
+		obj1->setPosition(obj1Pos + (overlap * obj1PushRatio) * collisionNormal);
+		obj2->setPosition(obj2Pos + (overlap * obj2PushRatio) * collisionNormal);
+	}
+
+	//Case2: if either one of them is static
+	if (obj1->isStatic() || obj2->isStatic())
+	{
+		//if obj1 is static
+		if (obj1->isStatic())
+		{
+			//push obj2 away by full overlap distance
+			obj2->setPosition(obj2Pos + overlap * collisionNormal);
+		}
+
+		//if obj2 is static
+		if (obj2->isStatic())
+		{
+			//push obj1 away by full overlap distance
+			obj1->setPosition(obj1Pos + overlap * collisionNormal);
+		}
+	}
 }
 
-void CollisionManager::impulsiveForce()
+void CollisionManager::resolveCollision(CollisionData& collisionData)
 {
+	Rigidbody* obj1 = (Rigidbody*)collisionData.obj1;
+	Rigidbody* obj2 = (Rigidbody*)collisionData.obj2;
+	glm::vec2 relativeVelocity = obj2->getVelocity() - obj1->getVelocity();
+	glm::vec2 collisionNormal = collisionData.collisionNormal;
+	float elasticity = 1;
 
+	//Case1: both objs are dynamic (non-static)
+	if (!(obj1->isStatic()) && !(obj2->isStatic()))
+	{
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// The following line is for getting the colisionNormal, but I will do that in collisionCheck instead. //
+		// This is because I do it with CollisionData class.												   //
+		// glm::vec2 normal = glm::normalize(actor2->getPosition() - m_position);							   //
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		float obj1Mass = obj1->getMass();
+		float obj2Mass = obj2->getMass();
+
+		float j = glm::dot(-(1 + elasticity) * (relativeVelocity), collisionNormal) /
+				  glm::dot(collisionNormal, collisionNormal * (1/obj1Mass + 1/obj2Mass));
+
+		glm::vec2 force = collisionNormal * j;
+		//apply force to obj2. since addForceToActor() already has opposite force applied to self,
+		//we don't need to manually apply force to obj1
+		obj1->addForceToActor(obj2, force);
+	}
+
+	//Case2: either one of the objs is static
+	if (obj1->isStatic() || obj2->isStatic())
+	{
+
+	}
 }

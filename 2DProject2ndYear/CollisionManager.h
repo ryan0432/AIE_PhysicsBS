@@ -25,7 +25,11 @@ public:
 	static bool box2Sphere(CollisionData&);
 	static bool box2Box(CollisionData&);
 
-	static void resolve();
-	static void impulsiveForce();
+	//this function pushes apart tanling objects caused by timestep difference
+	static void pushApart(CollisionData& collisionData);
+
+	//the resolution for two colliding objects
+	static void resolveCollision(CollisionData& collisionData);
+
 };
 
