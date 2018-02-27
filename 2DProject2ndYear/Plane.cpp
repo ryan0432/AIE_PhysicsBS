@@ -6,7 +6,7 @@
 
 Plane::Plane(glm::vec2 normal, glm::vec4 colour, float distanceToOrigin) : PhysicsObject(PLANE)
 {
-	m_normal = normal;
+	m_normal = glm::normalize(normal);
 	m_distanceToOrigin = distanceToOrigin;
 	m_colour = colour;
 }

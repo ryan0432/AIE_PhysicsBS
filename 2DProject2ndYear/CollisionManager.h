@@ -15,15 +15,15 @@ public:
 
 	static void checkForCollision(PhysicsScene* physicsScene);
 
-	static bool plane2Plane(CollisionData&);
-	static bool plane2Sphere(CollisionData&);
-	static bool plane2Box(CollisionData&);
-	static bool sphere2Plane(CollisionData&);
-	static bool sphere2Sphere(CollisionData&);
-	static bool sphere2Box(CollisionData&);
-	static bool box2Plane(CollisionData&);
-	static bool box2Sphere(CollisionData&);
-	static bool box2Box(CollisionData&);
+	static void plane2Plane(CollisionData&);
+	static void plane2Sphere(CollisionData&);
+	static void plane2Box(CollisionData&);
+	static void sphere2Plane(CollisionData&);
+	static void sphere2Sphere(CollisionData&);
+	static void sphere2Box(CollisionData&);
+	static void box2Plane(CollisionData&);
+	static void box2Sphere(CollisionData&);
+	static void box2Box(CollisionData&);
 
 	//this function pushes apart tanling objects caused by timestep difference
 	static void pushApart(CollisionData& collisionData);

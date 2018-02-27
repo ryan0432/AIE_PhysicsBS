@@ -52,8 +52,6 @@ void PhysicsScene::update(float deltaTime)
 
 		//--- checking collision to all actors START ---//
 
-		//CollisionManager* collisionManager;
-		//collisionManager->checkForCollision(this);
 		CollisionManager::checkForCollision(this);
 
 		//--- checking collision to all actors END ---//

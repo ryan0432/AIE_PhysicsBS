@@ -56,14 +56,27 @@ bool PhysicsEngineApp::startup()
 	// To fix deltaTime issue, move Rocket object into a Rocket class which derives from Sphere class or Rigidbody class
 	// So the fixedUpdate won't interfere the PhysicsScene
 	// [DON'T directly call fixedUpdate from newed rocket object from App, it will break the PhysicsScene
-	Sphere* rocketBall01;
-	rocketBall01 = new Sphere(glm::vec2(0,0),glm::vec2(0,0), rocketTotallMass, rocketRadius, glm::vec4(0,0,1,1));
-	m_physicsScene->addActor(rocketBall01);
+	//Sphere* rocketBall01;
+	//rocketBall01 = new Sphere(glm::vec2(0,0),glm::vec2(0,0), rocketTotallMass, rocketRadius, glm::vec4(0,0,1,1));
+	//m_physicsScene->addActor(rocketBall01);
 	//--------------------------------//
 
 	//------ Collision Detection Test ------//
+
+	Sphere* ball01;
+	ball01 = new Sphere(glm::vec2(0, 0), glm::vec2(0, 0), 1.0f, 3.0f, glm::vec4(0, 0, 1, 1));
+	m_physicsScene->addActor(ball01);
+
+	Sphere* ball02;
+	ball02 = new Sphere(glm::vec2(0, 20), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(1, 0, 0, 1));
+	m_physicsScene->addActor(ball02);
+
+	Box* box01;
+	box01 = new Box(glm::vec2(30, 0), glm::vec2(0, 0), 2.0f, glm::vec2(1, 2), glm::vec4(1, 1, 0, 1));
+	m_physicsScene->addActor(box01);
+
 	Plane* plane01;
-	plane01 = new Plane(glm::vec2(0,1), glm::vec4(1,1,1,1), -45);
+	plane01 = new Plane(glm::vec2(0, 1), glm::vec4(1, 1, 1, 1), -49);
 	m_physicsScene->addActor(plane01);
 
 	return true;
@@ -103,53 +116,53 @@ void PhysicsEngineApp::update(float deltaTime)
 
 	//------ Rocket Launch Test Start ------//
 	//------ Part1: Create Emission Balls ------//
-	Rigidbody* rocket = (Rigidbody*) (m_physicsScene->getActors()[0]);
+	//Rigidbody* rocket = (Rigidbody*) (m_physicsScene->getActors()[0]);
 
-	if (input->isKeyDown(aie::INPUT_KEY_UP))
-	{
-		rocketTotallMass = rocket->getMass();
+	//if (input->isKeyDown(aie::INPUT_KEY_UP))
+	//{
+	//	rocketTotallMass = rocket->getMass();
 
-		if (rocketTotallMass >= rocketShellMass)
-		{
-			rocket->addForce(glm::vec2(0, gasMass * 500 * deltaTime)); //*
-			rocket->setMass(rocketTotallMass -= gasMass * deltaTime);
+	//	if (rocketTotallMass >= rocketShellMass)
+	//	{
+	//		rocket->addForce(glm::vec2(0, gasMass * 500 * deltaTime)); //*
+	//		rocket->setMass(rocketTotallMass -= gasMass * deltaTime);
 
-			if (emissionTimer(deltaTime, 0.3f))
-			{
-				Sphere* gas = new Sphere(glm::vec2(rocket->getPosition().x, (rocket->getPosition().y - rocketRadius - gasRadius - 1)),
-										 glm::vec2(0, -2.0f), gasMass, gasRadius, glm::vec4(1, 0.5f, 0, 1));
-				m_physicsScene->addActor(gas);
-			}
-		}
-	}
+	//		if (emissionTimer(deltaTime, 0.3f))
+	//		{
+	//			Sphere* gas = new Sphere(glm::vec2(rocket->getPosition().x, (rocket->getPosition().y - rocketRadius - gasRadius - 1)),
+	//									 glm::vec2(0, -2.0f), gasMass, gasRadius, glm::vec4(1, 0.5f, 0, 1));
+	//			m_physicsScene->addActor(gas);
+	//		}
+	//	}
+	//}
 
 	//------ Part2-method1: Delete Emission Balls ------//
-	std::vector <PhysicsObject*> deletingActorList;
-	int actorListSize = m_physicsScene->getActors().size();
+	//std::vector <PhysicsObject*> deletingActorList;
+	//int actorListSize = m_physicsScene->getActors().size();
 
-	for (int i = 1; i < actorListSize; ++i)
-	{
-		if (actorListSize < 1)
-			continue;
+	//for (int i = 1; i < actorListSize; ++i)
+	//{
+	//	if (actorListSize < 1)
+	//		continue;
 
-		if (((Rigidbody*)(m_physicsScene->getActors()[i]))->getPosition().y < -55)
-		{
-			deletingActorList.push_back(m_physicsScene->getActors()[i]);
-		}
-	}
+	//	if (((Rigidbody*)(m_physicsScene->getActors()[i]))->getPosition().y < -55)
+	//	{
+	//		deletingActorList.push_back(m_physicsScene->getActors()[i]);
+	//	}
+	//}
 
-	for (auto i : deletingActorList)
-	{
-		for (auto j : m_physicsScene->getActors())
-		{
-			if (i == j)
-			{
-				m_physicsScene->removeActor(j);
-			}
-		}
-	}
+	//for (auto i : deletingActorList)
+	//{
+	//	for (auto j : m_physicsScene->getActors())
+	//	{
+	//		if (i == j)
+	//		{
+	//			m_physicsScene->removeActor(j);
+	//		}
+	//	}
+	//}
 
-	deletingActorList.clear();
+	//deletingActorList.clear();
 
 	//make sure delete memory (change class remove func)
 	//separate visual and actual force adding to the rocket
@@ -203,5 +216,6 @@ void PhysicsEngineApp::debugLog(float deltaTime)
 	std::cout << "Actor's Array Size: " << m_physicsScene->getActors().size() << std::endl;
 	std::cout << "Rocket Totall Mass: " << rocketTotallMass << std::endl;
 	std::cout << "Gas Mass: " << gasMass << std::endl;
+	m_physicsScene->getActors()[2]->debug();
 	system("cls");
 }
