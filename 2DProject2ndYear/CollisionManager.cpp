@@ -12,9 +12,6 @@
 #include <algorithm>
 #include <iostream>
 
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-
 
 
 typedef void(*fn)(CollisionData&);
@@ -96,30 +93,34 @@ void CollisionManager::plane2Box(CollisionData& collisionData)
 
 		//set the smallet distance to 1,
 		//so if the smallest distance is greater than one, it won't calculate
-		float smallest = 1;
+		float smallest = 10;
 
 		//check every corner
 		for (auto corner : boxCornersList)
 		{
 			//check all four corner's dot product with plane normal
-			collisionData.overlap = glm::dot(corner, plane->getNormal());
+			collisionData.overlap = glm::dot( corner, plane->getNormal() ) - plane->getDistanceToOrigin();
+
 			//if the latest check result is less than 1 and then less than previous stored result
 			if (collisionData.overlap < smallest)
 			{
 				//replace smallest with overlap
 				smallest = collisionData.overlap;
 				collisionData.collisionNormal = plane->getNormal();
+
+				//if the closest corner is overlapping
+				if (smallest < 0)
+				{
+					//negate the overlapping (to make it positive because to caculate
+					//resolveCollision and pushApart() needs positive figure)
+					collisionData.overlap *= -1;
+					collisionData.isCollided = true;
+					pushApart(collisionData);
+					resolveCollision(collisionData);
+				}
 			}
 		}
 		//if the smallest is equal or less than 0, means we have a collision
-		if (smallest < 0)
-		{
-			collisionData.overlap *= -1;
-			collisionData.isCollided = true;
-			pushApart(collisionData);
-			resolveCollision(collisionData);
-		}
-
 		collisionData.isCollided = false;
 	}
 }
@@ -132,11 +133,13 @@ void CollisionManager::sphere2Plane(CollisionData& collisionData)
 	if (sphere != nullptr && plane != nullptr)
 	{
 		collisionData.collisionNormal = plane->getNormal();
-		collisionData.overlap = glm::dot( sphere->getPosition(), plane->getNormal()) - plane->getDistanceToOrigin() - sphere->getRadius();
+		collisionData.overlap = glm::dot( sphere->getPosition(), plane->getNormal() ) - plane->getDistanceToOrigin() - sphere->getRadius();
 
-		//if we are behind the plane, flip the normal
+		//if we are behind the plane
 		if (collisionData.overlap < 0)
 		{
+			//negate the overlapping (to make it positive because to caculate
+			//resolveCollision and pushApart() needs positive figure)
 			collisionData.overlap *= -1;
 			collisionData.isCollided = true;
 			pushApart(collisionData);
@@ -194,29 +197,40 @@ void CollisionManager::sphere2Box(CollisionData& collisionData)
 
 																				//set the smallet distance to 1,
 																				//so if the smallest distance is greater than one, it won't calculate
-		float smallest = 1;
+																				//set the smallet distance to 1,
+		
+		//set the smallet distance to 10,
+		//so if the smallest distance is greastd::cout << "corner a1: (" << boxCornersList[0].x << ", " << boxCornersList[0].y << ")" << std::endl;ter than 10, it won't calculate
+		float smallest = 10;
 
 		//check every corner
 		for (auto corner : boxCornersList)
 		{
 			collisionData.collisionNormal = glm::normalize(corner - sphere->getPosition());
 			collisionData.overlap = glm::dot(corner, collisionData.collisionNormal) - sphere->getRadius();
+			
 			//if the latest check result is less than 1 and then less than previous stored result
 			if (collisionData.overlap < smallest)
 			{
 				//replace smallest with overlap
 				smallest = collisionData.overlap;
+				//collisionData.collisionNormal = glm::normalize(corner - sphere->getPosition());
+				//std::cout << "overlape: " << collisionData.overlap << std::endl;
+				//std::cout << "corner a1: (" << boxCornersList[0].x << ", " << boxCornersList[0].y << ")" << std::endl;
+				//std::cout << "corner a2: (" << boxCornersList[1].x << ", " << boxCornersList[1].y << ")" << std::endl;
+				//std::cout << "corner a3: (" << boxCornersList[2].x << ", " << boxCornersList[2].y << ")" << std::endl;
+				//std::cout << "corner a4: (" << boxCornersList[3].x << ", " << boxCornersList[3].y << ")" << std::endl;
+				//system("cls");
+				//if the smallest is equal or less than 0, means we have a collision
+				if (smallest < 0)
+				{
+					collisionData.overlap *= -1;
+					collisionData.isCollided = true;
+					pushApart(collisionData);
+					resolveCollision(collisionData);
+				}
 			}
 		}
-		//if the smallest is equal or less than 0, means we have a collision
-		if (smallest < 0)
-		{
-			collisionData.overlap *= -1;
-			collisionData.isCollided = true;
-			pushApart(collisionData);
-			resolveCollision(collisionData);
-		}
-
 		collisionData.isCollided = false;
 	}
 }
@@ -224,13 +238,13 @@ void CollisionManager::sphere2Box(CollisionData& collisionData)
 void CollisionManager::box2Plane(CollisionData& collisionData)
 {
 	collisionData.swapObjs();
-	return plane2Box(collisionData);
+	plane2Box(collisionData);
 }
 
 void CollisionManager::box2Sphere(CollisionData& collisionData)
 {
 	collisionData.swapObjs();
-	return sphere2Box(collisionData);
+	sphere2Box(collisionData);
 }
 
 void CollisionManager::box2Box(CollisionData& collisionData)
@@ -245,27 +259,24 @@ void CollisionManager::box2Box(CollisionData& collisionData)
 		//-----------------------//
 		//collision resolving START
 		//collision resolving END
-		return;
 	}
 
 }
 
 void CollisionManager::pushApart(CollisionData& collisionData)
 {
-	//get instance pointer of two objs
-	Rigidbody* obj1 = dynamic_cast <Rigidbody*> (collisionData.obj1);
-	Rigidbody* obj2 = dynamic_cast <Rigidbody*> (collisionData.obj2);
-
-
-
 	//get collisionNormal and overlap form CollisionData
 	glm::vec2 collisionNormal = collisionData.collisionNormal;
 	float overlap = collisionData.overlap;
 
 	//check if objs are static
 	//Case1: if both objs are dynamic (not static), push them apart by their mass ratio
-	if (obj1->isStatic() == false && obj2->isStatic() == false)
+	if ( !(collisionData.obj1->isStatic()) && !(collisionData.obj2->isStatic()) )
 	{
+		//get instance pointer of two objs
+		Rigidbody* obj1 = dynamic_cast <Rigidbody*> (collisionData.obj1);
+		Rigidbody* obj2 = dynamic_cast <Rigidbody*> (collisionData.obj2);
+
 		//get two objs' pos for further use
 		glm::vec2 obj1Pos = obj1->getPosition();
 		glm::vec2 obj2Pos = obj2->getPosition();
@@ -282,19 +293,21 @@ void CollisionManager::pushApart(CollisionData& collisionData)
 	}
 
 	//Case2: if either one of them is static
-	if (obj1->isStatic() || obj2->isStatic())
+	if (collisionData.obj1->isStatic() || collisionData.obj2->isStatic())
 	{
 		//if obj1 is static
-		if (obj1->isStatic())
+		if (collisionData.obj1->isStatic())
 		{
+			Rigidbody* obj2 = dynamic_cast <Rigidbody*> (collisionData.obj2);
 			glm::vec2 obj2Pos = obj2->getPosition();
 			//push obj2 away by full overlap distance
-			obj2->setPosition(obj2Pos - overlap * collisionNormal);
+			obj2->setPosition(obj2Pos + overlap * collisionNormal);
 		}
 
 		//if obj2 is static
-		if (obj2->isStatic())
+		if (collisionData.obj2->isStatic())
 		{
+			Rigidbody* obj1 = dynamic_cast <Rigidbody*> (collisionData.obj1);
 			glm::vec2 obj1Pos = obj1->getPosition();
 			//push obj1 away by full overlap distance
 			obj1->setPosition(obj1Pos + overlap * collisionNormal);
@@ -304,7 +317,6 @@ void CollisionManager::pushApart(CollisionData& collisionData)
 
 void CollisionManager::resolveCollision(CollisionData& collisionData)
 {
-
 	glm::vec2 collisionNormal = collisionData.collisionNormal;
 	//set elasticity to 1 for now. later on maybe set it in CollisionData
 	float elasticity = 1;
@@ -337,7 +349,7 @@ void CollisionManager::resolveCollision(CollisionData& collisionData)
 			glm::vec2 relativeVelocity = obj2->getVelocity();
 
 			float j = glm::dot(-(1 + elasticity) * (relativeVelocity), collisionNormal) /
-				glm::dot(collisionNormal, collisionNormal * (/*1 / obj1Mass*/ + 1 / obj2Mass));
+							  (1 / obj2Mass);
 
 			glm::vec2 force = collisionNormal * j;
 
@@ -351,7 +363,7 @@ void CollisionManager::resolveCollision(CollisionData& collisionData)
 			glm::vec2 relativeVelocity = obj1->getVelocity();
 
 			float j = glm::dot(-(1 + elasticity) * (relativeVelocity), collisionNormal) /
-				glm::dot(collisionNormal, collisionNormal * (/*1 / obj2Mass*/ + 1 / obj1Mass));
+							  (1 / obj1Mass);
 
 			glm::vec2 force = collisionNormal * j;
 

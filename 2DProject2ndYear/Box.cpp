@@ -5,8 +5,10 @@
 
 
 Box::Box(glm::vec2 position, glm::vec2 velocity,
-	float mass, glm::vec2 bound, glm::vec4 colour) : Rigidbody(BOX, position, velocity, 0, mass), m_bound(bound), m_colour(colour)
+	float mass, glm::vec2 bound, glm::vec4 colour) : Rigidbody(BOX, position, velocity, 0, mass)
 {
+	m_bound = bound;
+	m_colour = colour;
 }
 
 
@@ -21,6 +23,9 @@ void Box::makeGizmo()
 
 void Box::debug()
 {
+	std::cout << "Box Position (" << m_position.x << ", " << m_position.x << ")" << std::endl;
 	std::cout << "Box width:  " << m_bound.x * 2 << std::endl;
 	std::cout << "Box height: " << m_bound.y * 2 << std::endl;
+	std::cout << "Box mass: " << m_mass << std::endl;
+	std::cout << "===================================" << std::endl;
 }

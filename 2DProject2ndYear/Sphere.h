@@ -9,6 +9,7 @@ public:
 	~Sphere();
 
 	virtual void makeGizmo() override;
+	virtual void debug() override;
 
 	///--- we do collision in PhysicsScene now ---///
 	//virtual bool checkCollision(PhysicsObject* pOther);

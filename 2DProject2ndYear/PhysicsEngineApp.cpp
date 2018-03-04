@@ -37,7 +37,7 @@ bool PhysicsEngineApp::startup()
 
 	m_physicsScene = new PhysicsScene();
 	m_physicsScene->setTimeStep(0.01f);
-	m_physicsScene->setGravity(glm::vec2(0, -9.8));
+	m_physicsScene->setGravity(glm::vec2(0, 0));
 
 	//------ Newton's 2nd law test ------//
 	//Sphere* ball01;
@@ -63,21 +63,33 @@ bool PhysicsEngineApp::startup()
 
 	//------ Collision Detection Test ------//
 
-	Sphere* ball01;
-	ball01 = new Sphere(glm::vec2(0, 0), glm::vec2(0, 0), 1.0f, 3.0f, glm::vec4(0, 0, 1, 1));
-	m_physicsScene->addActor(ball01);
-
-	Sphere* ball02;
-	ball02 = new Sphere(glm::vec2(0, 20), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(1, 0, 0, 1));
-	m_physicsScene->addActor(ball02);
-
 	Box* box01;
-	box01 = new Box(glm::vec2(30, 0), glm::vec2(0, 0), 2.0f, glm::vec2(1, 2), glm::vec4(1, 1, 0, 1));
+	box01 = new Box(glm::vec2(-40, 0), glm::vec2(20, 0), 2.0f, glm::vec2(3, 6), glm::vec4(1, 1, 0, 1));
 	m_physicsScene->addActor(box01);
 
-	Plane* plane01;
+	Sphere* ball01;
+	ball01 = new Sphere(glm::vec2(40, 0), glm::vec2(-20, 0), 1.0f, 10.0f, glm::vec4(0, 0, 1, 1));
+	m_physicsScene->addActor(ball01);
+
+	//Sphere* ball02;
+	//ball02 = new Sphere(glm::vec2(0, 30), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(1, 0, 0, 1));
+	//m_physicsScene->addActor(ball02);
+
+	Plane* plane01; //floor
 	plane01 = new Plane(glm::vec2(0, 1), glm::vec4(1, 1, 1, 1), -49);
 	m_physicsScene->addActor(plane01);
+
+	Plane* plane02; //ceiling
+	plane02 = new Plane(glm::vec2(0, -1), glm::vec4(1, 1, 1, 1), -49);
+	m_physicsScene->addActor(plane02);
+
+	Plane* plane03; //left wall
+	plane03 = new Plane(glm::vec2(1, 0), glm::vec4(1, 1, 1, 1), -90);
+	m_physicsScene->addActor(plane03);
+
+	Plane* plane04; //right wall
+	plane04 = new Plane(glm::vec2(-1, 0), glm::vec4(1, 1, 1, 1), -90);
+	m_physicsScene->addActor(plane04);
 
 	return true;
 }
@@ -211,11 +223,13 @@ bool PhysicsEngineApp::emissionTimer(float deltaTime, float emissionRate)
 
 void PhysicsEngineApp::debugLog(float deltaTime)
 {
-	std::cout << "Delta Time: " << deltaTime << std::endl;
-	std::cout << "Key Timer: " << keyTimer << std::endl;
-	std::cout << "Actor's Array Size: " << m_physicsScene->getActors().size() << std::endl;
-	std::cout << "Rocket Totall Mass: " << rocketTotallMass << std::endl;
-	std::cout << "Gas Mass: " << gasMass << std::endl;
-	m_physicsScene->getActors()[2]->debug();
+	//std::cout << "Delta Time: " << deltaTime << std::endl;
+	//std::cout << "Key Timer: " << keyTimer << std::endl;
+	//std::cout << "Actor's Array Size: " << m_physicsScene->getActors().size() << std::endl;
+	//std::cout << "Rocket Totall Mass: " << rocketTotallMass << std::endl;
+	//std::cout << "Gas Mass: " << gasMass << std::endl;
+	
+	//m_physicsScene->debugScene();
+
 	system("cls");
 }
