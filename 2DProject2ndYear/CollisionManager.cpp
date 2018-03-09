@@ -238,6 +238,7 @@ void CollisionManager::box2Box(CollisionData& collisionData)
 
 	std::vector<glm::vec2> box1_cornerList;
 	std::vector<glm::vec2> box2_cornerList;
+	std::vector<glm::vec2> boxesNormalList;
 
 	if (box1 != nullptr && box2 != nullptr)
 	{
@@ -255,8 +256,8 @@ void CollisionManager::box2Box(CollisionData& collisionData)
 		box1_cornerList.push_back(box1_B1);
 		box1_cornerList.push_back(box1_B2);
 
-		glm::vec2 box1_vertiNormal = glm::normalize(box1_A1 - box1_A2) * glm::vec2(0, -1);
-		glm::vec2 box1_horizNormal = glm::normalize(box1_B1 - box1_A1) * glm::vec2(0, -1);
+		glm::vec2 box1_vertiNormal = glm::vec2(glm::normalize(box1_A1 - box1_A2).y, -glm::normalize(box1_A1 - box1_A2).x);
+		glm::vec2 box1_horizNormal = glm::vec2(-glm::normalize(box1_A1 - box1_B1).y, glm::normalize(box1_A1 - box1_B1).x);
 
 		//Box2 Details
 		glm::vec2 box2Bound = box2->getBound();												//			Example:
@@ -267,24 +268,111 @@ void CollisionManager::box2Box(CollisionData& collisionData)
 		glm::vec2 box2_B1(box2Centre.x - box2Bound.x, box2Centre.y + box2Bound.y);			//	   |	  Box2	   |  
 		glm::vec2 box2_B2(box2Centre.x - box2Bound.x, box2Centre.y - box2Bound.y);			//	   |_______________|
 																							//	B2					 A2
-		glm::vec2 box2_vertiNormal = glm::normalize(box2_A1 - box2_A2) * glm::vec2(0, -1);
-		glm::vec2 box2_horizNormal = glm::normalize(box2_B1 - box2_A1) * glm::vec2(0, -1);
 
 		box2_cornerList.push_back(box2_A1);
 		box2_cornerList.push_back(box2_A2);
 		box2_cornerList.push_back(box2_B1);
 		box2_cornerList.push_back(box2_B2);
 
-		glm::vec2 box2_vertiNormal = glm::normalize(box2_A1 - box2_A2) * glm::vec2(0, -1);
-		glm::vec2 box2_horizNormal = glm::normalize(box2_B1 - box2_A1) * glm::vec2(0, -1);
+		glm::vec2 box2_vertiNormal = glm::vec2(glm::normalize(box2_A1 - box2_A2).y, -glm::normalize(box2_A1 - box2_A2).x);
+		glm::vec2 box2_horizNormal = glm::vec2(-glm::normalize(box2_A1 - box2_B1).y, glm::normalize(box2_A1 - box2_B1).x);
 
-		for (auto corner : box1_cornerList)
+		boxesNormalList.push_back(box1_vertiNormal);
+		boxesNormalList.push_back(box1_horizNormal);
+		boxesNormalList.push_back(box2_vertiNormal);
+		boxesNormalList.push_back(box2_horizNormal);
+
+
+		//std::cout << "box1  vertical  normals: (" << box1_vertiNormal.x << ", " << box1_vertiNormal.y << ")" << std::endl;
+		//std::cout << "box1 horizontal normals: (" << box1_horizNormal.x << ", " << box1_horizNormal.y << ")" << std::endl;
+
+		//std::cout << "box2  vertical  normals: (" << box2_vertiNormal.x << ", " << box2_vertiNormal.y << ")" << std::endl;
+		//std::cout << "box2 horizontal normals: (" << box2_horizNormal.x << ", " << box2_horizNormal.y << ")" << std::endl;
+
+		float minDist_box1 = 200;
+		float maxDist_box1 = -200;
+		float minDist_box2 = 200;
+		float maxDist_box2 = -200;
+
+		float smallestOverlap = 2000;
+		glm::vec2 smallestOverlapNormal;
+
+		bool isGap = false;
+		//check dot products by edge to corners
+		for (auto edge : boxesNormalList)
 		{
-			float smallestX = glm::dot(corner, box2_vertiNormal);
-			float smallestY = glm::dot(corner, box2_horizNormal);
+			for (auto corner : box1_cornerList)
+			{
+				float dot = glm::dot(corner, edge);
+				
+				if (dot > maxDist_box1)
+				{
+					maxDist_box1 = dot;
+				}
 
+				if (dot < minDist_box1)
+				{
+					minDist_box1 = dot;
+				}
+			}
+
+			for (auto corner : box2_cornerList)
+			{
+				float dot = glm::dot(corner, edge);
+
+				if (dot > maxDist_box2)
+				{
+					maxDist_box2 = dot;
+				}
+
+				if (dot < minDist_box2)
+				{
+					minDist_box2 = dot;
+				}
+			}
+
+			if (maxDist_box1 > minDist_box2 || maxDist_box2 < minDist_box1)
+			{
+				float overlap1 = maxDist_box1 - minDist_box2;
+				float overlap2 = minDist_box1 - maxDist_box2;
+				if (std::abs(overlap1) < std::abs(overlap2))
+				{
+					if (std::abs(overlap1) < std::abs(smallestOverlap))
+					{
+						smallestOverlap = overlap1;
+						smallestOverlapNormal = edge;
+					}
+				}
+				else
+				{
+					if (std::abs(overlap2) < std::abs(smallestOverlap))
+					{
+						smallestOverlap = overlap2;
+						smallestOverlapNormal = edge;
+					}
+				}
+			}
+			else
+			{
+				isGap = true;
+				break;
+			}
 		}
 
+		if (isGap)
+		{
+			collisionData.isCollided = false;
+		}
+		else
+		{
+			collisionData.isCollided = true;
+			collisionData.overlap = -smallestOverlap;
+			collisionData.collisionNormal = smallestOverlapNormal;
+			pushApart(collisionData);
+			resolveCollision(collisionData);
+		}
+
+		std::cout << "overlap: " << smallestOverlap << std::endl;
 	}																					  
 																						  
 }

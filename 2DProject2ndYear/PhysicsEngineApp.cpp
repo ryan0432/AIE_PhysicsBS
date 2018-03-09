@@ -71,13 +71,13 @@ bool PhysicsEngineApp::startup()
 	box01 = new Box(glm::vec2(40, 0), glm::vec2(-20, 0), 2.0f, glm::vec2(3, 6), glm::vec4(1, 1, 0, 1));
 	m_physicsScene->addActor(box01);
 
-	//Sphere* ball01;
-	//ball01 = new Sphere(glm::vec2(10, 0), glm::vec2(-20, 0), 1.0f, 10.0f, glm::vec4(0, 0, 1, 1));
-	//m_physicsScene->addActor(ball01);
+	Sphere* ball01;
+	ball01 = new Sphere(glm::vec2(10, 0), glm::vec2(-20, 0), 1.0f, 10.0f, glm::vec4(0, 0, 1, 1));
+	m_physicsScene->addActor(ball01);
 
-	//Sphere* ball02;
-	//ball02 = new Sphere(glm::vec2(0, 30), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(1, 0, 0, 1));
-	//m_physicsScene->addActor(ball02);
+	Sphere* ball02;
+	ball02 = new Sphere(glm::vec2(0, 30), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(1, 0, 0, 1));
+	m_physicsScene->addActor(ball02);
 
 	Plane* plane01; //floor
 	plane01 = new Plane(glm::vec2(0, 1), glm::vec4(1, 1, 1, 1), -49);
