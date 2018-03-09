@@ -179,23 +179,18 @@ void CollisionManager::sphere2Box(CollisionData& collisionData)
 {
 	Sphere* sphere = dynamic_cast<Sphere*>(collisionData.obj1);
 	Box* box = dynamic_cast<Box*>(collisionData.obj2);
-	std::vector <glm::vec2> boxCornersList;
 
 	if (sphere != nullptr && box != nullptr)
 	{
 		glm::vec2 boxBound = box->getBound();									//         Example:
 		glm::vec2 boxCentre = box->getPosition();								//	b1  _______________	 a1
 																				//	   |			   |
-		glm::vec2 a1(boxCentre.x + boxBound.x, boxCentre.y + boxBound.y);		//	   |	(centre)   |
-		boxCornersList.push_back(a1);											//	   |	   * 	   |
-		glm::vec2 a2(boxCentre.x + boxBound.x, boxCentre.y - boxBound.y);		//	   |			   |
-		boxCornersList.push_back(a2);											//	   |_______________|
-		glm::vec2 b1(boxCentre.x - boxBound.x, boxCentre.y + boxBound.y);		//	b2					 a2
-		boxCornersList.push_back(b1);
-		glm::vec2 b2(boxCentre.x - boxBound.x, boxCentre.y - boxBound.y);		//set the smallet distance to 1,
-		boxCornersList.push_back(b2);											//so if the smallest distance is greater than one, it won't calculate
-																				//set the smallet distance to 1,
-
+		glm::vec2 a1(boxCentre.x + boxBound.x, boxCentre.y + boxBound.y);		//	   |	(centre)   |											
+		glm::vec2 a2(boxCentre.x + boxBound.x, boxCentre.y - boxBound.y);		//	   |	   * 	   |											
+		glm::vec2 b1(boxCentre.x - boxBound.x, boxCentre.y + boxBound.y);		//	   |			   |
+		glm::vec2 b2(boxCentre.x - boxBound.x, boxCentre.y - boxBound.y);		//	   |_______________|
+																				//	b2					 a2
+																				
 		glm::vec2 sphereCentre = sphere->getPosition();
 		float sphereRadius = sphere->getRadius();
 		glm::vec2 collisionPoint = glm::clamp(sphereCentre, b2, a1);
@@ -241,15 +236,57 @@ void CollisionManager::box2Box(CollisionData& collisionData)
 	Box* box1 = dynamic_cast<Box*>(collisionData.obj1);
 	Box* box2 = dynamic_cast<Box*>(collisionData.obj2);
 
+	std::vector<glm::vec2> box1_cornerList;
+	std::vector<glm::vec2> box2_cornerList;
+
 	if (box1 != nullptr && box2 != nullptr)
 	{
-		//collision detection START
-		//collision detection END
-		//-----------------------//
-		//collision resolving START
-		//collision resolving END
-	}
+		//Box1 Details
+		glm::vec2 box1Bound = box1->getBound();												//			Example:
+		glm::vec2 box1Centre = box1->getPosition();											//	B1  _______________	 A1  
+																							//	   |			   |  
+		glm::vec2 box1_A1(box1Centre.x + box1Bound.x, box1Centre.y + box1Bound.y);			//	   |	(centre)   |	  
+		glm::vec2 box1_A2(box1Centre.x + box1Bound.x, box1Centre.y - box1Bound.y);			//	   |	   * 	   |	  
+		glm::vec2 box1_B1(box1Centre.x - box1Bound.x, box1Centre.y + box1Bound.y);			//	   |	  Box1	   |  
+		glm::vec2 box1_B2(box1Centre.x - box1Bound.x, box1Centre.y - box1Bound.y);			//	   |_______________|
+																							//	B2					 A2
+		box1_cornerList.push_back(box1_A1);
+		box1_cornerList.push_back(box1_A2);
+		box1_cornerList.push_back(box1_B1);
+		box1_cornerList.push_back(box1_B2);
 
+		glm::vec2 box1_vertiNormal = glm::normalize(box1_A1 - box1_A2) * glm::vec2(0, -1);
+		glm::vec2 box1_horizNormal = glm::normalize(box1_B1 - box1_A1) * glm::vec2(0, -1);
+
+		//Box2 Details
+		glm::vec2 box2Bound = box2->getBound();												//			Example:
+		glm::vec2 box2Centre = box2->getPosition();											//	B1  _______________	 A1  
+																							//	   |			   |  
+		glm::vec2 box2_A1(box2Centre.x + box2Bound.x, box2Centre.y + box2Bound.y);			//	   |	(centre)   |	  
+		glm::vec2 box2_A2(box2Centre.x + box2Bound.x, box2Centre.y - box2Bound.y);			//	   |	   * 	   |	  
+		glm::vec2 box2_B1(box2Centre.x - box2Bound.x, box2Centre.y + box2Bound.y);			//	   |	  Box2	   |  
+		glm::vec2 box2_B2(box2Centre.x - box2Bound.x, box2Centre.y - box2Bound.y);			//	   |_______________|
+																							//	B2					 A2
+		glm::vec2 box2_vertiNormal = glm::normalize(box2_A1 - box2_A2) * glm::vec2(0, -1);
+		glm::vec2 box2_horizNormal = glm::normalize(box2_B1 - box2_A1) * glm::vec2(0, -1);
+
+		box2_cornerList.push_back(box2_A1);
+		box2_cornerList.push_back(box2_A2);
+		box2_cornerList.push_back(box2_B1);
+		box2_cornerList.push_back(box2_B2);
+
+		glm::vec2 box2_vertiNormal = glm::normalize(box2_A1 - box2_A2) * glm::vec2(0, -1);
+		glm::vec2 box2_horizNormal = glm::normalize(box2_B1 - box2_A1) * glm::vec2(0, -1);
+
+		for (auto corner : box1_cornerList)
+		{
+			float smallestX = glm::dot(corner, box2_vertiNormal);
+			float smallestY = glm::dot(corner, box2_horizNormal);
+
+		}
+
+	}																					  
+																						  
 }
 
 void CollisionManager::pushApart(CollisionData& collisionData)
