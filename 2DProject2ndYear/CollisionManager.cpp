@@ -183,55 +183,44 @@ void CollisionManager::sphere2Box(CollisionData& collisionData)
 
 	if (sphere != nullptr && box != nullptr)
 	{
-		glm::vec2 boxBound = box->getBound();
-		glm::vec2 boxCentre = box->getPosition();
-
-		glm::vec2 a1(boxCentre.x + boxBound.x, boxCentre.y + boxBound.y);		//         Example:
-		boxCornersList.push_back(a1);											//	b1  _______________	 a1
+		glm::vec2 boxBound = box->getBound();									//         Example:
+		glm::vec2 boxCentre = box->getPosition();								//	b1  _______________	 a1
+																				//	   |			   |
+		glm::vec2 a1(boxCentre.x + boxBound.x, boxCentre.y + boxBound.y);		//	   |	(centre)   |
+		boxCornersList.push_back(a1);											//	   |	   * 	   |
 		glm::vec2 a2(boxCentre.x + boxBound.x, boxCentre.y - boxBound.y);		//	   |			   |
-		boxCornersList.push_back(a2);											//	   |	(centre)   |
-		glm::vec2 b1(boxCentre.x - boxBound.x, boxCentre.y + boxBound.y);		//	   |	   * 	   |
-		boxCornersList.push_back(b1);				                            //	   |			   |
-		glm::vec2 b2(boxCentre.x - boxBound.x, boxCentre.y - boxBound.y);		//	   |_______________|
-		boxCornersList.push_back(b2);											//	b2					 a2
-
+		boxCornersList.push_back(a2);											//	   |_______________|
+		glm::vec2 b1(boxCentre.x - boxBound.x, boxCentre.y + boxBound.y);		//	b2					 a2
+		boxCornersList.push_back(b1);
+		glm::vec2 b2(boxCentre.x - boxBound.x, boxCentre.y - boxBound.y);		//set the smallet distance to 1,
+		boxCornersList.push_back(b2);											//so if the smallest distance is greater than one, it won't calculate
 																				//set the smallet distance to 1,
-																				//so if the smallest distance is greater than one, it won't calculate
-																				//set the smallet distance to 1,
-		
-		//set the smallet distance to 10,
-		//so if the smallest distance is greastd::cout << "corner a1: (" << boxCornersList[0].x << ", " << boxCornersList[0].y << ")" << std::endl;ter than 10, it won't calculate
-		float smallest = 10;
 
-		//check every corner
-		for (auto corner : boxCornersList)
+		glm::vec2 sphereCentre = sphere->getPosition();
+		float sphereRadius = sphere->getRadius();
+		glm::vec2 collisionPoint = glm::clamp(sphereCentre, b2, a1);
+		glm::vec2 collisionNormal = glm::normalize(sphereCentre - collisionPoint);
+		float distBetween = glm::distance(sphereCentre, collisionPoint);
+
+		collisionData.collisionNormal = collisionNormal;
+		collisionData.overlap = sphereRadius - distBetween;
+
+		//------ debug log ------//
+		std::cout << "collsion normal: (" << collisionData.collisionNormal.x << ", " << collisionData.collisionNormal.y << ")" << std::endl;
+		std::cout << "overlap: " << collisionData.overlap << std::endl;
+		//-----------------------//
+
+		if (collisionData.overlap > 0)
 		{
-			collisionData.collisionNormal = glm::normalize(corner - sphere->getPosition());
-			collisionData.overlap = glm::dot(corner, collisionData.collisionNormal) - sphere->getRadius();
-			
-			//if the latest check result is less than 1 and then less than previous stored result
-			if (collisionData.overlap < smallest)
-			{
-				//replace smallest with overlap
-				smallest = collisionData.overlap;
-				//collisionData.collisionNormal = glm::normalize(corner - sphere->getPosition());
-				//std::cout << "overlape: " << collisionData.overlap << std::endl;
-				//std::cout << "corner a1: (" << boxCornersList[0].x << ", " << boxCornersList[0].y << ")" << std::endl;
-				//std::cout << "corner a2: (" << boxCornersList[1].x << ", " << boxCornersList[1].y << ")" << std::endl;
-				//std::cout << "corner a3: (" << boxCornersList[2].x << ", " << boxCornersList[2].y << ")" << std::endl;
-				//std::cout << "corner a4: (" << boxCornersList[3].x << ", " << boxCornersList[3].y << ")" << std::endl;
-				//system("cls");
-				//if the smallest is equal or less than 0, means we have a collision
-				if (smallest < 0)
-				{
-					collisionData.overlap *= -1;
-					collisionData.isCollided = true;
-					pushApart(collisionData);
-					resolveCollision(collisionData);
-				}
-			}
+			//collisionData.overlap *= -1;
+			collisionData.isCollided = true;
+			pushApart(collisionData);
+			resolveCollision(collisionData);
 		}
-		collisionData.isCollided = false;
+		else
+		{
+			collisionData.isCollided = false;
+		}
 	}
 }
 

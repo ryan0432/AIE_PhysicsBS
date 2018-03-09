@@ -37,7 +37,7 @@ bool PhysicsEngineApp::startup()
 
 	m_physicsScene = new PhysicsScene();
 	m_physicsScene->setTimeStep(0.01f);
-	m_physicsScene->setGravity(glm::vec2(0, 0));
+	m_physicsScene->setGravity(glm::vec2(0, -9.8));
 
 	//------ Newton's 2nd law test ------//
 	//Sphere* ball01;
@@ -71,9 +71,9 @@ bool PhysicsEngineApp::startup()
 	ball01 = new Sphere(glm::vec2(40, 0), glm::vec2(-20, 0), 1.0f, 10.0f, glm::vec4(0, 0, 1, 1));
 	m_physicsScene->addActor(ball01);
 
-	//Sphere* ball02;
-	//ball02 = new Sphere(glm::vec2(0, 30), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(1, 0, 0, 1));
-	//m_physicsScene->addActor(ball02);
+	Sphere* ball02;
+	ball02 = new Sphere(glm::vec2(0, 30), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(1, 0, 0, 1));
+	m_physicsScene->addActor(ball02);
 
 	Plane* plane01; //floor
 	plane01 = new Plane(glm::vec2(0, 1), glm::vec4(1, 1, 1, 1), -49);
