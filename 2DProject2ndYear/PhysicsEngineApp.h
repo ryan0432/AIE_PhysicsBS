@@ -30,6 +30,20 @@ private:
 	float gasMass = 5.0f;
 	float gasRadius = 3.0f;
 
+	//------ ImGUI Section ------//
+	bool isMainWindowOpen = true;
+	float inputColour[4] = {0.5f, 0.5f, 0.5f, 1.0f};
+	bool isSphere = false;
+	bool isBox = false;
+	bool isPlane = false;
+
+	unsigned int flagsNumber = 3;
+	unsigned int falgValue = 0;
+
+
+	void ImGuiOptionCheck();
+
+	//------ Debug Section ------//
 	void debugLog(float deltaTime);
 
 };

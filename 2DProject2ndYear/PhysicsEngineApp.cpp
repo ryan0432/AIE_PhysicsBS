@@ -9,6 +9,9 @@
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+
+#include <Imgui.h>
+
 #include <Gizmos.h>
 #include <vector>
 #include <iterator>
@@ -38,6 +41,7 @@ bool PhysicsEngineApp::startup()
 	m_physicsScene = new PhysicsScene();
 	m_physicsScene->setTimeStep(0.01f);
 	m_physicsScene->setGravity(glm::vec2(0, -9.8));
+
 
 	//------ Newton's 2nd law test ------//
 	//Sphere* ball01;
@@ -107,6 +111,19 @@ void PhysicsEngineApp::shutdown()
 
 void PhysicsEngineApp::update(float deltaTime)
 {
+	//------ ImGUI Section ------//
+	ImGui::Begin("Physics Object Customizer", &isMainWindowOpen, ImVec2(300, 500), 0.5);
+	ImGui::ColorEdit4("Colour", inputColour, true);
+
+	ImGuiOptionCheck();
+	ImGui::Checkbox("Sphere", &isSphere);
+	ImGui::Checkbox("Box", &isBox);
+	ImGui::Checkbox("Plane", &isPlane);
+
+
+	ImGui::End();
+	ImGui::Render();
+
 	//clear Gizmos
 	aie::Gizmos::clear();
 
@@ -185,9 +202,10 @@ void PhysicsEngineApp::update(float deltaTime)
 	//emit visual by second
 	//store the search result in a new dynamicArray so we don't iter through the changing array (may cause problem)
 
-	//------ Rocket Launch Test End ------//
 
-	debugLog(deltaTime);
+
+	//------ Debug Log (Console) ------//
+	//debugLog(deltaTime);
 }
 
 void PhysicsEngineApp::draw()
@@ -223,6 +241,70 @@ bool PhysicsEngineApp::emissionTimer(float deltaTime, float emissionRate)
 	}
 
 	return false;
+}
+
+void PhysicsEngineApp::ImGuiOptionCheck()
+{
+	ShapeType currType = SHAPE_COUNT;
+
+	if (isSphere)
+	{
+		currType = SPHERE;
+		if (isBox)
+		{
+			currType = BOX;
+		}
+		if (isPlane)
+		{
+			currType = PLANE;
+		}
+	}
+
+	if (isBox)
+	{
+		currType = BOX;
+		if (isSphere)
+		{
+			currType = SPHERE;
+		}
+		if (isPlane)
+		{
+			currType = PLANE;
+		}
+	}
+
+	if (isPlane)
+	{
+		currType = PLANE;
+		if (isSphere)
+		{
+			currType = SPHERE;
+		}
+		if (isBox)
+		{
+			currType = BOX;
+		}
+	}
+
+	switch (currType)
+	{
+	case SPHERE:
+		isBox = false;
+		isPlane = false;
+		break;
+
+	case BOX:
+		isSphere = false;
+		isPlane = false;
+		break;
+	case PLANE:
+		isSphere = false;
+		isBox = false;
+		break;
+
+	default:
+		SHAPE_COUNT;
+	}
 }
 
 void PhysicsEngineApp::debugLog(float deltaTime)

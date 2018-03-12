@@ -201,8 +201,8 @@ void CollisionManager::sphere2Box(CollisionData& collisionData)
 		collisionData.overlap = sphereRadius - distBetween;
 
 		//------ debug log ------//
-		std::cout << "collsion normal: (" << collisionData.collisionNormal.x << ", " << collisionData.collisionNormal.y << ")" << std::endl;
-		std::cout << "overlap: " << collisionData.overlap << std::endl;
+		//std::cout << "collsion normal: (" << collisionData.collisionNormal.x << ", " << collisionData.collisionNormal.y << ")" << std::endl;
+		//std::cout << "overlap: " << collisionData.overlap << std::endl;
 		//-----------------------//
 
 		if (collisionData.overlap > 0)
@@ -372,7 +372,7 @@ void CollisionManager::box2Box(CollisionData& collisionData)
 			resolveCollision(collisionData);
 		}
 
-		std::cout << "overlap: " << smallestOverlap << std::endl;
+		//std::cout << "overlap: " << smallestOverlap << std::endl;
 	}																					  
 																						  
 }
