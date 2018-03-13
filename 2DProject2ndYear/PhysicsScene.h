@@ -3,8 +3,8 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
+struct CollisionManager;
 class PhysicsObject;
-class CollisionManager;
 class PhysicsScene
 {
 public:

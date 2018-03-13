@@ -42,7 +42,7 @@ bool PhysicsEngineApp::startup()
 	m_physicsScene->setTimeStep(0.01f);
 	m_physicsScene->setGravity(glm::vec2(0, -9.8));
 
-
+#pragma region RocketTest
 	//------ Newton's 2nd law test ------//
 	//Sphere* ball01;
 	//ball01 = new Sphere(glm::vec2(-40, 0), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(0, 0, 1, 1));
@@ -66,22 +66,7 @@ bool PhysicsEngineApp::startup()
 	//--------------------------------//
 
 	//------ Collision Detection Test ------//
-
-	Box* box01;
-	box01 = new Box(glm::vec2(-40, 0), glm::vec2(20, 0), 2.0f, glm::vec2(3, 6), glm::vec4(1, 0, 0, 1));
-	m_physicsScene->addActor(box01);
-
-	Box* box02;
-	box01 = new Box(glm::vec2(40, 0), glm::vec2(-20, 0), 2.0f, glm::vec2(3, 6), glm::vec4(1, 1, 0, 1));
-	m_physicsScene->addActor(box01);
-
-	Sphere* ball01;
-	ball01 = new Sphere(glm::vec2(10, 0), glm::vec2(-20, 0), 1.0f, 10.0f, glm::vec4(0, 0, 1, 1));
-	m_physicsScene->addActor(ball01);
-
-	Sphere* ball02;
-	ball02 = new Sphere(glm::vec2(0, 30), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(1, 0, 0, 1));
-	m_physicsScene->addActor(ball02);
+#pragma endregion
 
 	Plane* plane01; //floor
 	plane01 = new Plane(glm::vec2(0, 1), glm::vec4(1, 1, 1, 1), -49);
@@ -99,6 +84,22 @@ bool PhysicsEngineApp::startup()
 	plane04 = new Plane(glm::vec2(-1, 0), glm::vec4(1, 1, 1, 1), -90);
 	m_physicsScene->addActor(plane04);
 
+	Sphere* ball01;
+	ball01 = new Sphere(glm::vec2(10, 0), glm::vec2(-20, 0), 1.0f, 10.0f, glm::vec4(0, 0, 1, 1));
+	m_physicsScene->addActor(ball01);
+
+	Sphere* ball02;
+	ball02 = new Sphere(glm::vec2(0, 30), glm::vec2(0, 0), 1.0f, 5.0f, glm::vec4(1, 0, 0, 1));
+	m_physicsScene->addActor(ball02);
+	
+	Box* box01;
+	box01 = new Box(glm::vec2(-40, 0), glm::vec2(20, 0), 2.0f, glm::vec2(3, 6), glm::vec4(1, 0, 0, 1));
+	m_physicsScene->addActor(box01);
+	
+	Box* box02;
+	box01 = new Box(glm::vec2(40, 0), glm::vec2(-20, 0), 2.0f, glm::vec2(3, 6), glm::vec4(1, 1, 0, 1));
+	m_physicsScene->addActor(box01);
+
 	return true;
 }
 
@@ -111,28 +112,106 @@ void PhysicsEngineApp::shutdown()
 
 void PhysicsEngineApp::update(float deltaTime)
 {
-	//------ ImGUI Section ------//
-	ImGui::Begin("Physics Object Customizer", &isMainWindowOpen, ImVec2(300, 500), 0.5);
-	ImGui::ColorEdit4("Colour", inputColour, true);
-
-	ImGuiOptionCheck();
-	ImGui::Checkbox("Sphere", &isSphere);
-	ImGui::Checkbox("Box", &isBox);
-	ImGui::Checkbox("Plane", &isPlane);
-
-
-	ImGui::End();
-	ImGui::Render();
+	//input reference
+	aie::Input* input = aie::Input::getInstance();
 
 	//clear Gizmos
 	aie::Gizmos::clear();
 
-	//update physics scene
-	m_physicsScene->update(deltaTime);
-	m_physicsScene->updateGizmos();
+	//------ ImGUI Section ------//
+	ImGui::Begin("Physics Object Customizer", &isMainWindowOpen, ImVec2(300, 500), 0.5);
+	ImGui::ColorEdit4("Colour", inputColour, true);
+	ImGui::Text("Shape Type");
 
-	// input example
-	aie::Input* input = aie::Input::getInstance();
+	ImGui::RadioButton("Sphere",&currShapeType, 0); ImGui::SameLine();
+	ImGui::RadioButton("Box", &currShapeType, 1); ImGui::SameLine();
+	ImGui::RadioButton("Plane", &currShapeType, 2);
+
+	winMaxX = ImGui::GetWindowContentRegionMax().x;
+	winMaxY = ImGui::GetWindowContentRegionMax().y;
+	winMinX = ImGui::GetWindowContentRegionMin().x;
+	winMinY = ImGui::GetWindowContentRegionMin().y;
+
+	switch (currShapeType)
+	{
+		case 0:
+		{
+			ImGui::DragFloat("Sphere Radius", &initialSphereRadius, 0.1f, 1.0f, 50.0f);
+			ImGui::SliderFloat2("Velocity (X, Y)", initialVelocity, -50.0f, 50.0f);
+			ImGui::DragFloat("Mass", &initialMass, 1.0f, 0.1f, 20.0f);
+			break;
+		}
+
+		case 1:
+		{
+			ImGui::DragFloat2("Box Size (W, H)", initialBoxDemention, 0.1f, 1.0f, 50.0f);
+			ImGui::SliderFloat2("Velocity (X, Y)", initialVelocity, -50.0f, 50.0f);
+			ImGui::DragFloat("Mass", &initialMass, 1.0f, 0.1f, 20.0f);
+			break;
+		}
+
+		case 2:
+		{
+			ImGui::SliderAngle("Face Normal", &initialPlaneFacingNormal, 0.0f, 360.0f);
+			ImGui::DragFloat("Dist to Centre", &initialPlaneDist2Centre, 1.0f, 5.0f, 50.0f);
+			break;
+		}
+
+		default:
+		{
+			0;
+			break;
+		}
+	}
+
+	ImGui::End();
+	ImGui::Render();
+
+
+
+	//------ Create Objects By Input ------//
+	if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_LEFT))
+	{
+		float aspectRatio = (float)getWindowWidth() / (float)getWindowHeight();
+		float posX = (((float)input->getMouseX() / (float)getWindowWidth()) * 2 - 1) * 100.0f;
+		float posY = (((float)input->getMouseY() / (float)getWindowHeight()) * 2 - 1) * (100.0f / aspectRatio);
+
+		switch (currShapeType)
+		{
+			case 0:
+			{
+				Sphere* sphere = new Sphere(glm::vec2(posX, posY), glm::vec2(initialVelocity[0], initialVelocity[1]),
+										 initialMass, initialSphereRadius,
+										 glm::vec4(inputColour[0], inputColour[1], inputColour[2], inputColour[3]));
+				m_physicsScene->addActor(sphere);
+				break;
+			}
+
+			case 1:
+			{
+				Box* box = new Box(glm::vec2(posX, posY), glm::vec2(initialVelocity[0], initialVelocity[1]),
+								   initialMass, glm::vec2(initialBoxDemention[0] / 2, initialBoxDemention[1] / 2),
+								   glm::vec4(inputColour[0], inputColour[1], inputColour[2], inputColour[3]));
+				m_physicsScene->addActor(box);
+				break;
+			}
+
+			case 2:
+			{
+				Plane* plane = new Plane(glm::vec2(glm::sin(initialPlaneFacingNormal), glm::cos(initialPlaneFacingNormal)),
+									   glm::vec4(inputColour[0], inputColour[1], inputColour[2], inputColour[3]),
+									   initialPlaneDist2Centre);
+				m_physicsScene->addActor(plane);
+				break;
+			}
+
+			default:
+			{
+				0;
+				break;
+			}
+		}
+	}
 
 	static const glm::vec4 colour[] =
 	{
@@ -141,11 +220,17 @@ void PhysicsEngineApp::update(float deltaTime)
 		glm::vec4(0,1,1,1)
 	};
 
-	// exit the application
+	//------ update physics scene ------//
+	m_physicsScene->update(deltaTime);
+	m_physicsScene->updateGizmos();
+
+	//------ exit the application ------//
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 	{
 		quit();
 	}
+
+#pragma region RocketTest
 
 	//------ Rocket Launch Test Start ------//
 	//------ Part1: Create Emission Balls ------//
@@ -201,11 +286,10 @@ void PhysicsEngineApp::update(float deltaTime)
 	//separate visual and actual force adding to the rocket
 	//emit visual by second
 	//store the search result in a new dynamicArray so we don't iter through the changing array (may cause problem)
-
-
+#pragma endregion
 
 	//------ Debug Log (Console) ------//
-	//debugLog(deltaTime);
+	debugLog(deltaTime);
 }
 
 void PhysicsEngineApp::draw()
@@ -230,82 +314,20 @@ void PhysicsEngineApp::draw()
 	m_2dRenderer->end();
 }
 
-bool PhysicsEngineApp::emissionTimer(float deltaTime, float emissionRate)
-{
-	keyTimer += deltaTime;
-
-	if (keyTimer >= emissionRate)
-	{
-		keyTimer = 0;
-		return true;
-	}
-
-	return false;
-}
-
-void PhysicsEngineApp::ImGuiOptionCheck()
-{
-	ShapeType currType = SHAPE_COUNT;
-
-	if (isSphere)
-	{
-		currType = SPHERE;
-		if (isBox)
-		{
-			currType = BOX;
-		}
-		if (isPlane)
-		{
-			currType = PLANE;
-		}
-	}
-
-	if (isBox)
-	{
-		currType = BOX;
-		if (isSphere)
-		{
-			currType = SPHERE;
-		}
-		if (isPlane)
-		{
-			currType = PLANE;
-		}
-	}
-
-	if (isPlane)
-	{
-		currType = PLANE;
-		if (isSphere)
-		{
-			currType = SPHERE;
-		}
-		if (isBox)
-		{
-			currType = BOX;
-		}
-	}
-
-	switch (currType)
-	{
-	case SPHERE:
-		isBox = false;
-		isPlane = false;
-		break;
-
-	case BOX:
-		isSphere = false;
-		isPlane = false;
-		break;
-	case PLANE:
-		isSphere = false;
-		isBox = false;
-		break;
-
-	default:
-		SHAPE_COUNT;
-	}
-}
+#pragma region RocketTestFunctions
+//bool PhysicsEngineApp::emissionTimer(float deltaTime, float emissionRate)
+//{
+//	keyTimer += deltaTime;
+//
+//	if (keyTimer >= emissionRate)
+//	{
+//		keyTimer = 0;
+//		return true;
+//	}
+//
+//	return false;
+//}
+#pragma endregion
 
 void PhysicsEngineApp::debugLog(float deltaTime)
 {
@@ -314,8 +336,9 @@ void PhysicsEngineApp::debugLog(float deltaTime)
 	//std::cout << "Actor's Array Size: " << m_physicsScene->getActors().size() << std::endl;
 	//std::cout << "Rocket Totall Mass: " << rocketTotallMass << std::endl;
 	//std::cout << "Gas Mass: " << gasMass << std::endl;
-	
 	//m_physicsScene->debugScene();
+	std::cout << "Win Min: (" << winMinX << ", " << winMinY << ")" << std::endl;
+	std::cout << "Win Max: (" << winMaxX << ", " << winMaxY << ")" << std::endl;
 
 	system("cls");
 }
