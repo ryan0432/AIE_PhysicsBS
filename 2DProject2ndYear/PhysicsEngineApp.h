@@ -1,6 +1,8 @@
 #pragma once
 #include "Application.h"
 #include "Renderer2D.h"
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 class PhysicsScene;
 class PhysicsEngineApp : public aie::Application
@@ -45,10 +47,12 @@ private:
 	float initialPlaneFacingNormal = 0.0f;
 	float initialPlaneDist2Centre = 10.0f;
 
-	float winMaxX;
-	float winMaxY;
-	float winMinX;
-	float winMinY;
+	glm::vec2 winPos;
+	glm::vec2 winSize;
+
+	float aspectRatio;
+
+	glm::vec2 screenRatioConverter(float x, float y);
 
 	//------ Debug Section ------//
 	void debugLog(float deltaTime);

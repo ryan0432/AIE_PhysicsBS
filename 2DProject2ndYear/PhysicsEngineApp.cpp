@@ -34,6 +34,8 @@ bool PhysicsEngineApp::startup()
 
 	m_2dRenderer = new aie::Renderer2D();
 
+	aspectRatio = (float)getWindowWidth() / (float)getWindowHeight();
+
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
@@ -127,10 +129,8 @@ void PhysicsEngineApp::update(float deltaTime)
 	ImGui::RadioButton("Box", &currShapeType, 1); ImGui::SameLine();
 	ImGui::RadioButton("Plane", &currShapeType, 2);
 
-	winMaxX = ImGui::GetWindowContentRegionMax().x;
-	winMaxY = ImGui::GetWindowContentRegionMax().y;
-	winMinX = ImGui::GetWindowContentRegionMin().x;
-	winMinY = ImGui::GetWindowContentRegionMin().y;
+	winPos = screenRatioConverter(ImGui::GetWindowPos().x, (float)getWindowHeight() - ImGui::GetWindowPos().y);
+	winSize = glm::vec2(ImGui::GetWindowContentRegionMax().x * 100, ImGui::GetWindowContentRegionMax().y * (100.0f / aspectRatio));
 
 	switch (currShapeType)
 	{
@@ -153,7 +153,7 @@ void PhysicsEngineApp::update(float deltaTime)
 		case 2:
 		{
 			ImGui::SliderAngle("Face Normal", &initialPlaneFacingNormal, 0.0f, 360.0f);
-			ImGui::DragFloat("Dist to Centre", &initialPlaneDist2Centre, 1.0f, 5.0f, 50.0f);
+			ImGui::DragFloat("Dist to Centre", &initialPlaneDist2Centre, 0.1f, -50.0f, 50.0f);
 			break;
 		}
 
@@ -167,49 +167,52 @@ void PhysicsEngineApp::update(float deltaTime)
 	ImGui::End();
 	ImGui::Render();
 
-
-
 	//------ Create Objects By Input ------//
 	if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_LEFT))
 	{
-		float aspectRatio = (float)getWindowWidth() / (float)getWindowHeight();
-		float posX = (((float)input->getMouseX() / (float)getWindowWidth()) * 2 - 1) * 100.0f;
-		float posY = (((float)input->getMouseY() / (float)getWindowHeight()) * 2 - 1) * (100.0f / aspectRatio);
+		glm::vec2 mousePos = screenRatioConverter((float)input->getMouseX(), (float)input->getMouseY());
 
-		switch (currShapeType)
+		if(ImGui::IsMouseHoveringAnyWindow() == false)
 		{
-			case 0:
+			switch (currShapeType)
 			{
-				Sphere* sphere = new Sphere(glm::vec2(posX, posY), glm::vec2(initialVelocity[0], initialVelocity[1]),
-										 initialMass, initialSphereRadius,
-										 glm::vec4(inputColour[0], inputColour[1], inputColour[2], inputColour[3]));
-				m_physicsScene->addActor(sphere);
-				break;
-			}
+				case 0:
+				{
+					Sphere* sphere = new Sphere(mousePos, glm::vec2(initialVelocity[0], initialVelocity[1]),
+						initialMass, initialSphereRadius,
+						glm::vec4(inputColour[0], inputColour[1], inputColour[2], inputColour[3]));
+					m_physicsScene->addActor(sphere);
+					break;
+				}
 
-			case 1:
-			{
-				Box* box = new Box(glm::vec2(posX, posY), glm::vec2(initialVelocity[0], initialVelocity[1]),
-								   initialMass, glm::vec2(initialBoxDemention[0] / 2, initialBoxDemention[1] / 2),
-								   glm::vec4(inputColour[0], inputColour[1], inputColour[2], inputColour[3]));
-				m_physicsScene->addActor(box);
-				break;
-			}
+				case 1:
+				{
+					Box* box = new Box(mousePos, glm::vec2(initialVelocity[0], initialVelocity[1]),
+						initialMass, glm::vec2(initialBoxDemention[0] / 2, initialBoxDemention[1] / 2),
+						glm::vec4(inputColour[0], inputColour[1], inputColour[2], inputColour[3]));
+					m_physicsScene->addActor(box);
+					break;
+				}
 
-			case 2:
-			{
-				Plane* plane = new Plane(glm::vec2(glm::sin(initialPlaneFacingNormal), glm::cos(initialPlaneFacingNormal)),
-									   glm::vec4(inputColour[0], inputColour[1], inputColour[2], inputColour[3]),
-									   initialPlaneDist2Centre);
-				m_physicsScene->addActor(plane);
-				break;
-			}
+				case 2:
+				{
+					Plane* plane = new Plane(glm::vec2(glm::sin(initialPlaneFacingNormal), glm::cos(initialPlaneFacingNormal)),
+						glm::vec4(inputColour[0], inputColour[1], inputColour[2], inputColour[3]),
+						initialPlaneDist2Centre);
+					m_physicsScene->addActor(plane);
+					break;
+				}
 
-			default:
-			{
-				0;
-				break;
+				default:
+				{
+					0;
+					break;
+				}
 			}
+		}
+		else
+		{
+			return;
 		}
 	}
 
@@ -329,16 +332,27 @@ void PhysicsEngineApp::draw()
 //}
 #pragma endregion
 
+glm::vec2 PhysicsEngineApp::screenRatioConverter(float x, float y)
+{
+	float posX = ((x / (float)getWindowWidth()) * 2 - 1) * 100.0f;
+	float posY = ((y / (float)getWindowHeight()) * 2 - 1 ) * (100.0f / aspectRatio);
+
+	return glm::vec2(posX, posY);
+}
+
 void PhysicsEngineApp::debugLog(float deltaTime)
 {
+#pragma region RocketTest
 	//std::cout << "Delta Time: " << deltaTime << std::endl;
 	//std::cout << "Key Timer: " << keyTimer << std::endl;
 	//std::cout << "Actor's Array Size: " << m_physicsScene->getActors().size() << std::endl;
 	//std::cout << "Rocket Totall Mass: " << rocketTotallMass << std::endl;
 	//std::cout << "Gas Mass: " << gasMass << std::endl;
 	//m_physicsScene->debugScene();
-	std::cout << "Win Min: (" << winMinX << ", " << winMinY << ")" << std::endl;
-	std::cout << "Win Max: (" << winMaxX << ", " << winMaxY << ")" << std::endl;
+#pragma endregion
+
+	std::cout << "Win Pos: (" << winPos.x << ", " << winPos.y << ")" << std::endl;
+	std::cout << "Win Siz: (" << winSize.x << ", " << winSize.y << ")" << std::endl;
 
 	system("cls");
 }
