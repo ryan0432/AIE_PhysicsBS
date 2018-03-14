@@ -99,14 +99,15 @@ bool PhysicsEngineApp::startup()
 	m_physicsScene->addActor(box01);
 	
 	Box* box02;
-	box01 = new Box(glm::vec2(40, 0), glm::vec2(-20, 0), 2.0f, glm::vec2(3, 6), glm::vec4(1, 1, 0, 1));
-	m_physicsScene->addActor(box01);
+	box02 = new Box(glm::vec2(40, 0), glm::vec2(-20, 0), 2.0f, glm::vec2(3, 6), glm::vec4(1, 1, 0, 1));
+	m_physicsScene->addActor(box02);
 
 	return true;
 }
 
 void PhysicsEngineApp::shutdown()
 {
+	aie::Gizmos::destroy();
 	delete m_font;
 	delete m_2dRenderer;
 	delete m_physicsScene;

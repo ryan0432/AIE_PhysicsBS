@@ -6,7 +6,6 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include "test.h"
 
 PhysicsScene::PhysicsScene() : m_timeStep(0.01f), m_gravity(glm::vec2(0, 0))
 {
@@ -35,8 +34,6 @@ void PhysicsScene::removeActor(PhysicsObject* actor)
 
 void PhysicsScene::update(float deltaTime)
 {
-	//static std::list<PhysicsObject*> dirty;
-
 	// update physics at a fixed time step
 	static float accumulatedTime = 0.0f;
 	accumulatedTime += deltaTime;
@@ -50,24 +47,25 @@ void PhysicsScene::update(float deltaTime)
 
 		accumulatedTime -= m_timeStep;
 
-		//--- checking collision to all actors START ---//
+		//------ checking collision to all actors ------//
 
 		CollisionManager::checkForCollision(this);
 
-		//--- checking collision to all actors END ---//
+#pragma region Old CheckCollision
 
 		///------ We don't use old circle collision detection anymore ------//////////////////////////////////
+		//static std::list<PhysicsObject*> dirty;															//
 		//for (auto pActor : m_actors)																		//
 		//{																									//
 		//	for (auto pOther : m_actors)																	//
 		//	{																								//
 		//		if (pActor == pOther)																		//
 		//			continue;																				//
-																											//
+		//
 		//		if (std::find(dirty.begin(), dirty.end(), pActor) != dirty.end() &&							//
 		//			std::find(dirty.begin(), dirty.end(), pOther) != dirty.end())							//
 		//			continue;																				//
-																											//
+		//
 		//		Rigidbody* pRigid = dynamic_cast<Rigidbody*>(pActor);										//
 		//		//set up a saftey guard to make sure pActor is not a nullptr (we actually input an actor)	//
 		//		if (pRigid == nullptr)  continue;															//
@@ -85,13 +83,9 @@ void PhysicsScene::update(float deltaTime)
 		//dirty.clear();																					//
 		///------ We don't use old circle collision detection anymore ------//////////////////////////////////
 
-		//--- checking collision to all actors END ---//
-	}
+#pragma endregion
 
-	//////////////////////////////
-	// namespace usage example  //
-	// MathHelp::Power(2.0f,3); //
-	//////////////////////////////
+	}
 }
 
 void PhysicsScene::updateGizmos()

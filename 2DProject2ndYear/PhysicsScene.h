@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-struct CollisionManager;
+class CollisionManager;
 class PhysicsObject;
 class PhysicsScene
 {

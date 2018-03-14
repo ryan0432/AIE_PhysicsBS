@@ -68,9 +68,6 @@
     <ClInclude Include="PhysicsEngineApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>Header Files\PysicsObjects</Filter>
     </ClInclude>

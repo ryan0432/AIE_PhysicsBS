@@ -5,7 +5,7 @@ class Rigidbody;
 class Plane;
 class Sphere;
 class Box;
-class CollisionData;
+struct CollisionData;
 
 class CollisionManager
 {

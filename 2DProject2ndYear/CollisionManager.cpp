@@ -29,12 +29,12 @@ void CollisionManager::checkForCollision(PhysicsScene* physicsScene)
 	//PhysicsScene* physicsScene;
 	CollisionData collisionData = CollisionData();
 	std::vector<PhysicsObject*> actors = physicsScene->getActors();
-	int actorCount = physicsScene->getActors().size();
+	size_t actorCount = physicsScene->getActors().size();
 
 	//check collisions against all objects except for self.
-	for (int i = 0; i < actorCount - 1; i++)
+	for (size_t i = 0; i < actorCount - 1; i++)
 	{
-		for (int j = i + 1; j < actorCount; j++)
+		for (size_t j = i + 1; j < actorCount; j++)
 		{
 			PhysicsObject* object1 = actors[i];
 			PhysicsObject* object2 = actors[j];
